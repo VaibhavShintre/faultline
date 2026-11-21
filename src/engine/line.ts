@@ -261,6 +261,10 @@ export function sameLine(prev: Line, cur: Line): boolean {
 export interface Counterexample {
   /** Variable assignment, for example { x: 2 }. */
   at: Record<string, number>
+  /** The same assignment written for people, with fractions kept exact: "x = 17/3". */
+  atText: string
+  /** True when the check point is a solution of the correct line, so showing it gives part of the answer away. */
+  revealsSolution: boolean
   /** Human-readable facts verified numerically. */
   prevSays: string
   curSays: string
@@ -270,6 +274,20 @@ const fmt = (x: number) => {
   const r = Math.round(x * 1000) / 1000
   return Object.is(r, -0) ? '0' : String(r)
 }
+
+/** Writes a value the way a student would: whole numbers and simple fractions exactly, anything else to 3 places. */
+export function nice(x: number): string {
+  for (let d = 1; d <= 24; d++) {
+    const n = Math.round(x * d)
+    if (Math.abs(x - n / d) < 1e-9) return d === 1 ? fmt(n) : `${n}/${d}`
+  }
+  return fmt(x)
+}
+
+const atText = (at: Record<string, number>) =>
+  Object.entries(at)
+    .map(([k, v]) => `${k} = ${nice(v)}`)
+    .join(', ')
 
 const NICE = [2, 1, 3, 0, -1, 4, -2, 5, 10, -3]
 
@@ -285,7 +303,7 @@ export function counterexample(prev: Line, cur: Line): Counterexample | null {
       const env = Object.fromEntries(vars.map((v, i) => [v, tuple[i % tuple.length]]))
       const [p, q] = [evaluate(prev.node, env), evaluate(cur.node, env)]
       if (Number.isFinite(p) && Number.isFinite(q) && !close(p, q))
-        return { at: env, prevSays: `the line above equals ${fmt(p)}`, curSays: `your line equals ${fmt(q)}` }
+        return { at: env, atText: atText(env), revealsSolution: false, prevSays: `the line above equals ${fmt(p)}`, curSays: `your line equals ${fmt(q)}` }
     }
     return null
   }
@@ -303,12 +321,19 @@ export function counterexample(prev: Line, cur: Line): Counterexample | null {
       const ok = holds(line, x)
       return `${fmt(l)} ${ok ? '=' : '≠'} ${fmt(r)}`
     }
-    for (const x of real(a))
-      if (!holds(cur, x))
-        return { at: { [variable]: x }, prevSays: `the line above is true (${describe(prev, x)})`, curSays: `your line is false (${describe(cur, x)})` }
+    // Prefer a value that makes the student's own line true: it proves the two lines disagree
+    // without handing over a solution of the original problem.
     for (const x of real(b))
-      if (!holds(prev, x))
-        return { at: { [variable]: x }, prevSays: `the line above is false (${describe(prev, x)})`, curSays: `your line is true (${describe(cur, x)})` }
+      if (!holds(prev, x)) {
+        const at = { [variable]: x }
+        return { at, atText: atText(at), revealsSolution: false, prevSays: `the line above is false (${describe(prev, x)})`, curSays: `your line is true (${describe(cur, x)})` }
+      }
+    // Otherwise the only separating value is a solution the student's line has lost.
+    for (const x of real(a))
+      if (!holds(cur, x)) {
+        const at = { [variable]: x }
+        return { at, atText: atText(at), revealsSolution: true, prevSays: `the line above is true (${describe(prev, x)})`, curSays: `your line is false (${describe(cur, x)})` }
+      }
   }
   return null
 }

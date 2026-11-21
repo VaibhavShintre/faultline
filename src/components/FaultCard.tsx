@@ -1,50 +1,96 @@
 import { useEffect, useRef, useState } from 'react'
-import { type AiStatus, type Tutor, createTutor, faultPrompt } from '../ai'
+import { type AiStatus, type GuardedReply, type Tutor, createTutor, faultPrompt, followUpPrompt, guardedSay } from '../ai'
 import type { Analysis } from '../engine/analyze'
 import { CATALOG, explain } from '../engine/catalog'
 import type { MisconceptionId } from '../engine/malrules'
 import { hasTargetedPractice } from '../engine/practice'
+import { guardContext } from '../guard'
 import { Crack } from './StepEditor'
 import { Rich, Tex } from './Tex'
 
 interface Props {
   analysis: Analysis
+  /** Which mistake to show: an index into `analysis.steps`. Defaults to the fault line. */
+  index?: number
   ai: AiStatus
   onEnableAi: () => void
   onPractice?: (skill: MisconceptionId) => void
 }
 
-export function FaultCard({ analysis, ai, onEnableAi, onPractice }: Props) {
-  const [revealed, setRevealed] = useState(false)
+const list = (nums: number[]) => (nums.length <= 2 ? nums.join(' and ') : `${nums.slice(0, -1).join(', ')} and ${nums[nums.length - 1]}`)
+
+/** One sentence per kind of line that comes after the fault line. */
+function AfterTheFault({ analysis }: { analysis: Analysis }) {
   const fault = analysis.steps[analysis.faultIndex!]
+  const later = analysis.steps.filter((s) => s.index > fault.index && s.line)
+  if (!later.length) return null
+  const of = (status: string) => later.filter((s) => s.status === status).map((s) => s.index + 1)
+  const [carried, second, recovered] = [of('carried'), of('second-fault'), of('recovered')]
+  const after = later.filter((s) => s.status === 'ok').map((s) => s.index + 1)
+  if (!carried.length && !second.length && !recovered.length) return null
+  return (
+    <section className="after">
+      <h3>After the fault line</h3>
+      <ul>
+        {carried.length > 0 && (
+          <li className="after-carried">
+            <strong>
+              {carried.length === 1 ? 'Line' : 'Lines'} {list(carried)}
+            </strong>{' '}
+            {carried.length === 1 ? 'follows' : 'follow'} correctly from the line above. Your method there is sound, it just started from a wrong line: fix line{' '}
+            {fault.index + 1} and redo {carried.length === 1 ? 'it' : 'them'}.
+          </li>
+        )}
+        {second.length > 0 && (
+          <li className="after-second">
+            <strong>
+              {second.length === 1 ? 'Line' : 'Lines'} {list(second)}
+            </strong>{' '}
+            {second.length === 1 ? 'is a second, separate mistake' : 'are further, separate mistakes'}, shown below.
+          </li>
+        )}
+        {recovered.length > 0 && (
+          <li className="after-recovered">
+            <strong>Line {list(recovered)}</strong> agrees with the correct working again, so you are back on track from there
+            {after.length > 0 ? ` and line${after.length === 1 ? '' : 's'} ${list(after)} ${after.length === 1 ? 'follows' : 'follow'}` : ''}.
+          </li>
+        )}
+      </ul>
+    </section>
+  )
+}
+
+export function FaultCard({ analysis, index, ai, onEnableAi, onPractice }: Props) {
+  const [revealed, setRevealed] = useState(false)
+  const first = index === undefined || index === analysis.faultIndex
+  const fault = analysis.steps[index ?? analysis.faultIndex!]
   const d = fault.diagnosis!
   const info = CATALOG[d.id]
-  const prev = analysis.steps.filter((s) => s.index < fault.index && (s.status === 'ok' || s.status === 'start')).pop()
+  const prev = analysis.steps[fault.against ?? 0]
   const cx = fault.counterexample
-  const at = cx
-    ? Object.entries(cx.at)
-        .map(([k, v]) => `${k} = ${v}`)
-        .join(', ')
-    : ''
+  const at = cx?.atText ?? ''
 
   // A new fault starts with the corrected step hidden again.
   const faultKey = `${prev?.raw}|${fault.raw}`
   useEffect(() => setRevealed(false), [faultKey])
 
   return (
-    <article className="card fault-card" aria-live="polite">
+    <article className={`card fault-card ${first ? '' : 'fault-card-second'}`} aria-live="polite">
       <header className="fault-head">
         <span className="eyebrow eyebrow-fault">
-          <Crack /> Fault line at line {fault.index + 1}
+          <Crack /> {first ? 'Fault line' : 'Second mistake'} at line {fault.index + 1}
         </span>
         <h2>{info.name}</h2>
         <p className="belief">The idea behind it: “{info.belief}”</p>
       </header>
 
       <div className="break">
-        <div className="break-line break-ok">
-          <span className="break-tag">Line {prev ? prev.index + 1 : 1}</span>
-          <Tex tex={prev?.tex ?? ''} block />
+        <div className={`break-line ${first ? 'break-ok' : 'break-off'}`}>
+          <span className="break-tag">
+            Line {prev.index + 1}
+            {!first && ' (already off)'}
+          </span>
+          <Tex tex={prev.tex ?? ''} block />
         </div>
         <svg className="break-crack" viewBox="0 0 400 18" preserveAspectRatio="none" aria-hidden="true">
           <path d="M0 9 H120 l14 -7 12 13 14 -11 10 9 12 -6 H400" fill="none" stroke="currentColor" strokeWidth="1.5" />
@@ -58,6 +104,7 @@ export function FaultCard({ analysis, ai, onEnableAi, onPractice }: Props) {
       <section>
         <h3>What happened</h3>
         <p>
+          {!first && `Even starting from line ${prev.index + 1} as you wrote it, this line does not follow. `}
           <Rich text={explain(d, revealed)} />
         </p>
         {d.right && !revealed && (
@@ -81,11 +128,13 @@ export function FaultCard({ analysis, ai, onEnableAi, onPractice }: Props) {
         <p>{info.principle}</p>
       </section>
 
-      <TutorPanel key={faultKey} analysis={analysis} ai={ai} onEnableAi={onEnableAi} />
+      {first && <AfterTheFault analysis={analysis} />}
+
+      {first && <TutorPanel key={faultKey} analysis={analysis} ai={ai} onEnableAi={onEnableAi} />}
 
       {onPractice && (
         <footer className="card-actions">
-          <button className="btn btn-primary" onClick={() => onPractice(d.id)}>
+          <button className={`btn ${first ? 'btn-primary' : ''}`} onClick={() => onPractice(d.id)}>
             {hasTargetedPractice(d.id) ? 'Practise this exact mistake' : 'Practise a similar problem'}
           </button>
         </footer>
@@ -97,6 +146,36 @@ export function FaultCard({ analysis, ai, onEnableAi, onPractice }: Props) {
 interface Turn {
   who: 'tutor' | 'you'
   text: string
+  /** How the engine's check of this reply went. Absent while the reply is still streaming. */
+  check?: Pick<GuardedReply, 'outcome' | 'notes' | 'checked'>
+  /** Why a draft was rejected, in words. */
+  reason?: string
+}
+
+const WHY: Record<string, string> = {
+  'answer-leak': 'it gave away the answer',
+  'false-arithmetic': 'it contained arithmetic that is wrong',
+}
+
+function CheckNote({ check, reason }: { check: NonNullable<Turn['check']>; reason: string }) {
+  if (check.outcome === 'withheld')
+    return (
+      <p className="turn-check turn-check-warn">
+        The tutor’s reply is not shown: twice in a row {reason || 'it failed the check'}. Everything above this panel comes from the exact checker and still stands.
+      </p>
+    )
+  const unconfirmed = check.notes.filter((n) => n.kind === 'unverified-equation')
+  const text =
+    (check.outcome === 'rewritten' ? `A first draft was thrown away because ${reason || 'it failed the check'}. ` : '') +
+    (unconfirmed.length > 0
+      ? `The checker could not confirm “${unconfirmed[0].quote}” in this reply. Trust the marked lines over the tutor’s wording.`
+      : check.checked > 0
+        ? `✓ ${check.checked === 1 ? 'The equation' : `All ${check.checked} equations`} in this reply ${check.checked === 1 ? 'was' : 'were'} checked by the symbolic engine.`
+        : check.outcome === 'rewritten'
+          ? 'This version passed the check.'
+          : '')
+  if (!text) return null
+  return <p className={`turn-check ${unconfirmed.length ? 'turn-check-warn' : ''}`}>{text}</p>
 }
 
 function TutorPanel({ analysis, ai, onEnableAi }: Pick<Props, 'analysis' | 'ai' | 'onEnableAi'>) {
@@ -111,7 +190,9 @@ function TutorPanel({ analysis, ai, onEnableAi }: Pick<Props, 'analysis' | 'ai' 
     setTurns((t) => [...t, { who: 'tutor', text: '' }])
     try {
       tutor.current ??= await createTutor()
-      await tutor.current.say(prompt, (text) => setTurns((t) => [...t.slice(0, -1), { who: 'tutor', text }]))
+      const reply = await guardedSay(tutor.current, prompt, guardContext(analysis), (text) => setTurns((t) => [...t.slice(0, -1), { who: 'tutor', text }]))
+      const hard = reply.attempts.flatMap((a) => a.flags).find((f) => WHY[f.kind])
+      setTurns((t) => [...t.slice(0, -1), { who: 'tutor', text: reply.text, check: reply, reason: hard ? WHY[hard.kind] : '' }])
     } catch {
       setFailed(true)
       setTurns((t) => t.slice(0, -1))
@@ -142,7 +223,7 @@ function TutorPanel({ analysis, ai, onEnableAi }: Pick<Props, 'analysis' | 'ai' 
     if (!q || busy) return
     setQuestion('')
     setTurns((t) => [...t, { who: 'you', text: q }])
-    void speak(`The student asks: "${q}"\nAnswer using the FACTS above. Do not give the final answer to the problem.`)
+    void speak(followUpPrompt(analysis.steps, analysis.faultIndex!, q))
   }
 
   if (ai === 'unavailable' || failed)
@@ -150,8 +231,8 @@ function TutorPanel({ analysis, ai, onEnableAi }: Pick<Props, 'analysis' | 'ai' 
       <section className="tutor tutor-off">
         <h3>Tutor</h3>
         <p className="muted">
-          The explanation above comes from Faultline’s built-in rule library, which works in every browser. The conversational tutor uses the on-device model in
-          desktop Chrome, so nothing you type is sent anywhere.
+          {failed ? 'The on-device model stopped responding, so the tutor is off for now. ' : ''}The explanation above comes from Faultline’s built-in rule library, which
+          works in every browser. The conversational tutor uses the on-device model in desktop Chrome, so nothing you type is sent anywhere.
         </p>
       </section>
     )
@@ -174,9 +255,10 @@ function TutorPanel({ analysis, ai, onEnableAi }: Pick<Props, 'analysis' | 'ai' 
       </h3>
       <div className="turns">
         {turns.map((t, i) => (
-          <p key={i} className={`turn turn-${t.who}`}>
-            {t.text || <span className="typing" aria-label="The tutor is thinking" />}
-          </p>
+          <div key={i} className={`turn-wrap turn-wrap-${t.who}`}>
+            {(t.text || !t.check) && <p className={`turn turn-${t.who}`}>{t.text || <span className="typing" aria-label="The tutor is thinking" />}</p>}
+            {t.check && <CheckNote check={t.check} reason={t.reason ?? ''} />}
+          </div>
         ))}
         {ai === 'checking' && <p className="muted">Looking for an on-device model…</p>}
       </div>

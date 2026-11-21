@@ -19,6 +19,7 @@ const EXAMPLES: { title: string; lines: string[] }[] = [
   { title: 'Quadratic', lines: ['x^2 - 9 = 40', 'x^2 = 49', 'x = 7'] },
   { title: 'Fractions', lines: ['x/3 + 2 = 6', 'x + 2 = 18', 'x = 16'] },
   { title: 'Factoring', lines: ['x^2 - 5x + 6 = 0', '(x - 2)(x - 3) = 0', 'x = -2 or x = -3'] },
+  { title: 'Two mistakes', lines: ['5(x + 2) - 3 = 2x + 19', '5x + 2 - 3 = 2x + 19', '5x - 1 = 2x + 19', '7x - 1 = 19', '7x = 20', 'x = 20/7'] },
   { title: 'All correct', lines: ['2(x + 5) = 3x - 4', '2x + 10 = 3x - 4', '10 = x - 4', 'x = 14'] },
 ]
 
@@ -116,10 +117,10 @@ function CheckView({ ai, onEnableAi, onFault, onPractice }: { ai: AiStatus; onEn
     const a = analyze(source)
     setAnalysis(a)
     if (a.faultIndex !== null) {
-      const fault = a.steps[a.faultIndex]
-      const key = `${a.steps[0].raw}|${fault.raw}`
+      const key = `${a.steps[0].raw}|${a.faults.map((i) => a.steps[i].raw).join('|')}`
       if (key !== recorded) {
-        onFault(fault.diagnosis!.id)
+        // Every separate mistake counts against its own misconception, not just the first one.
+        a.faults.forEach((i) => onFault(a.steps[i].diagnosis!.id))
         setRecorded(key)
       }
     }
@@ -162,7 +163,7 @@ function CheckView({ ai, onEnableAi, onFault, onPractice }: { ai: AiStatus; onEn
 
       <section className="result">
         {!analysis && <HowItWorks />}
-        {analysis && analysis.faultIndex !== null && <FaultCard analysis={analysis} ai={ai} onEnableAi={onEnableAi} onPractice={onPractice} />}
+        {analysis && analysis.faults.map((i) => <FaultCard key={i} analysis={analysis} index={i} ai={ai} onEnableAi={onEnableAi} onPractice={onPractice} />)}
         {analysis && analysis.faultIndex === null && analysis.clean && unreadable && <UnreadableCard />}
         {analysis && analysis.faultIndex === null && analysis.clean && !unreadable && (
           <article className="card clean-card">
@@ -321,7 +322,7 @@ function PracticeView({
       </section>
 
       <section className="result">
-        {analysis && analysis.faultIndex !== null && <FaultCard analysis={analysis} ai={ai} onEnableAi={onEnableAi} />}
+        {analysis && analysis.faults.map((i) => <FaultCard key={i} analysis={analysis} index={i} ai={ai} onEnableAi={onEnableAi} />)}
         {solved && (
           <article className="card clean-card">
             <span className="eyebrow eyebrow-ok">✓ Solved without the mistake</span>

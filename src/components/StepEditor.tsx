@@ -17,7 +17,9 @@ const LABEL: Record<StepStatus, string> = {
   start: 'Starting line',
   ok: 'Follows from the line above',
   fault: 'This is the fault line',
-  'after-fault': 'Not checked: it builds on the fault above',
+  carried: 'Follows from the line above, which was already wrong',
+  'second-fault': 'A second, separate mistake',
+  recovered: 'Back on track: agrees with the correct working again',
   unreadable: 'Could not read this line',
   blank: '',
 }
@@ -73,7 +75,7 @@ export function StepEditor({ lines, onChange, analysis, lockFirst, onCheck }: Pr
         return (
           <li key={i} className={`step step-${status}`}>
             <span className="step-mark" title={status === 'editing' ? '' : LABEL[status]} aria-label={status === 'editing' ? `Line ${i + 1}` : LABEL[status]}>
-              {status === 'ok' ? '✓' : status === 'fault' ? <Crack /> : status === 'unreadable' ? '?' : i + 1}
+              {status === 'ok' || status === 'recovered' ? '✓' : status === 'fault' || status === 'second-fault' ? <Crack /> : status === 'carried' ? '→' : status === 'unreadable' ? '?' : i + 1}
             </span>
             <div className="step-body">
               <input
@@ -95,9 +97,9 @@ export function StepEditor({ lines, onChange, analysis, lockFirst, onCheck }: Pr
                 {p && 'tex' in p ? <Tex tex={p.tex} /> : p ? <span className="step-hint">keep typing…</span> : null}
               </div>
               {analysis?.steps[i]?.status === 'unreadable' && <p className="step-problem">{analysis.steps[i].problem}</p>}
-              {status === 'after-fault' && i === (analysis?.faultIndex ?? -1) + 1 && (
-                <p className="step-note">Lines below the fault are not marked. Fix the fault line first, then check again.</p>
-              )}
+              {status === 'carried' && <p className="step-note">Follows from the line above, so it carries the earlier mistake forward.</p>}
+              {status === 'second-fault' && <p className="step-note step-note-fault">A second, separate mistake: this does not follow from the line above either.</p>}
+              {status === 'recovered' && <p className="step-note step-note-ok">Back on track: this agrees with the correct working again.</p>}
             </div>
             {!locked && lines.length > 1 && (
               <button className="step-remove" aria-label={`Remove line ${i + 1}`} onClick={() => onChange(lines.filter((_, j) => j !== i))}>

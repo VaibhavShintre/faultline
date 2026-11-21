@@ -370,8 +370,13 @@ button {
 }
 
 .step-fault::before,
-.step-after-fault::before {
+.step-carried::before,
+.step-second-fault::before {
   background: repeating-linear-gradient(to bottom, var(--line) 0 4px, transparent 4px 8px);
+}
+
+.step-recovered::before {
+  background: var(--ok);
 }
 
 .step-mark {
@@ -408,6 +413,26 @@ button {
 .step-unreadable .step-mark {
   background: var(--warn);
   color: #fff;
+}
+
+.step-second-fault .step-mark {
+  background: var(--fault);
+  color: #fff;
+}
+
+/* Follows from a wrong line: the step itself is fine, so it gets an outlined mark, not a filled one. */
+.step-carried .step-mark {
+  background: var(--surface);
+  color: var(--warn);
+  box-shadow: inset 0 0 0 2px var(--warn);
+  font-size: 15px;
+}
+
+.step-recovered .step-mark {
+  background: var(--surface);
+  color: var(--ok);
+  box-shadow: inset 0 0 0 2px var(--ok);
+  font-size: 14px;
 }
 
 @keyframes quake {
@@ -458,8 +483,18 @@ button {
   border-color: color-mix(in srgb, var(--ok) 45%, var(--line));
 }
 
-.step-after-fault .step-input {
-  color: var(--muted);
+.step-second-fault .step-input {
+  border-color: var(--fault);
+  background: var(--fault-soft);
+}
+
+.step-carried .step-input {
+  border-color: color-mix(in srgb, var(--warn) 50%, var(--line));
+  border-style: dashed;
+}
+
+.step-recovered .step-input {
+  border-color: color-mix(in srgb, var(--ok) 45%, var(--line));
 }
 
 .step-preview {
@@ -489,6 +524,14 @@ button {
 
 .step-note {
   color: var(--muted);
+}
+
+.step-note-fault {
+  color: var(--fault);
+}
+
+.step-note-ok {
+  color: var(--ok);
 }
 
 .step-remove {
@@ -588,6 +631,49 @@ button {
   color: var(--fault);
 }
 
+.break-off {
+  background: var(--surface-2);
+}
+
+.break-off .break-tag {
+  width: 112px;
+}
+
+.fault-card-second {
+  border-top-color: color-mix(in srgb, var(--fault) 55%, var(--line));
+}
+
+.fault-card-second .break-crack {
+  background: linear-gradient(to bottom, var(--surface-2) 50%, var(--fault-soft) 50%);
+}
+
+/* What the lines after the fault line turned out to be. */
+.after ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.after li {
+  padding-left: 14px;
+  border-left: 3px solid var(--line);
+  font-size: 15px;
+}
+
+.after-carried {
+  border-left-color: var(--warn) !important;
+}
+
+.after-second {
+  border-left-color: var(--fault) !important;
+}
+
+.after-recovered {
+  border-left-color: var(--ok) !important;
+}
+
 .break-crack {
   display: block;
   width: 100%;
@@ -663,6 +749,21 @@ button {
 
 .turn {
   white-space: pre-wrap;
+}
+
+.turn-wrap {
+  display: grid;
+  gap: 6px;
+}
+
+/* The engine's verdict on a tutor reply. */
+.turn-check {
+  font-size: 12.5px;
+  color: var(--ok);
+}
+
+.turn-check-warn {
+  color: var(--warn);
 }
 
 .turn-you {

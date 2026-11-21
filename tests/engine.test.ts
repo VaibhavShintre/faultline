@@ -97,7 +97,8 @@ describe('diagnosis', () => {
   it('pinpoints the first wrong line and keeps going', () => {
     const a = analyze(['3(x - 2) + 4 = 19', '3x - 2 + 4 = 19', '3x + 2 = 19', '3x = 17', 'x = 17/3'])
     expect(a.faultIndex).toBe(1)
-    expect(a.steps.map((s) => s.status)).toEqual(['start', 'fault', 'after-fault', 'after-fault', 'after-fault'])
+    expect(a.steps.map((s) => s.status)).toEqual(['start', 'fault', 'carried', 'carried', 'carried'])
+    expect(a.faults).toEqual([1])
     expect(a.steps[1].diagnosis?.id).toBe('distribute-partial')
     expect(a.steps[1].diagnosis?.right).toBe('3x - 6')
     expect(a.steps[1].counterexample).toBeTruthy()

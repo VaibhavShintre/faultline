@@ -7,6 +7,7 @@
 import type { Step } from './engine/analyze'
 import { CATALOG, explain } from './engine/catalog'
 import { lineToText } from './engine/line'
+import { type Flag, type GuardContext, inspectReply, isHard, retryNote } from './guard'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
@@ -94,6 +95,64 @@ export async function createTutor(onDownload?: (fraction: number) => void): Prom
   }
 }
 
+export interface GuardedReply {
+  /** The reply that may be shown. Empty when it was withheld. */
+  text: string
+  /** passed: first draft was fine. rewritten: a draft failed the check and the second passed. withheld: both failed. */
+  outcome: 'passed' | 'rewritten' | 'withheld'
+  /** Every draft with what the engine found in it. */
+  attempts: { text: string; flags: Flag[] }[]
+  /** Soft findings in the reply that is shown. */
+  notes: Flag[]
+  /** Equations in the shown reply that the engine read and checked. */
+  checked: number
+}
+
+/**
+ * Asks the tutor and has the engine check the reply before the student relies on it.
+ * A draft that gives away the answer or states false arithmetic is stopped mid-stream and
+ * written again once. If the second draft fails too, nothing is shown.
+ */
+export async function guardedSay(
+  tutor: Tutor,
+  prompt: string,
+  ctx: GuardContext | null,
+  onText: (text: string) => void,
+  signal?: AbortSignal,
+): Promise<GuardedReply> {
+  const attempts: GuardedReply['attempts'] = []
+  let ask = prompt
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const stop = new AbortController()
+    const forward = () => stop.abort()
+    signal?.addEventListener('abort', forward)
+    let text = ''
+    try {
+      text = await tutor.say(
+        ask,
+        (soFar) => {
+          text = soFar
+          // While streaming, only judge whole words, so "x = 1" is not misread before "7/3" arrives.
+          const settled = soFar.slice(0, Math.max(0, soFar.search(/\s\S*$/)))
+          if (ctx && inspectReply(settled, ctx).flags.some(isHard)) stop.abort()
+          else onText(soFar)
+        },
+        stop.signal,
+      )
+    } catch (e) {
+      if (signal?.aborted || !stop.signal.aborted) throw e
+    } finally {
+      signal?.removeEventListener('abort', forward)
+    }
+    const found = ctx ? inspectReply(text, ctx) : { flags: [], checked: 0 }
+    attempts.push({ text, flags: found.flags })
+    if (!found.flags.some(isHard)) return { text, outcome: attempt === 0 ? 'passed' : 'rewritten', attempts, notes: found.flags, checked: found.checked }
+    onText('')
+    ask = `${prompt}\n\n${retryNote(found.flags)}`
+  }
+  return { text: '', outcome: 'withheld', attempts, notes: [], checked: 0 }
+}
+
 const clean = (s: string) => s.replace(/(?<![\w)])\*+(?=\S)([^*\n]+?)(?<=\S)\*+(?![\w(])/g, '$1').replace(/[$`]/g, '').trim()
 
 /** Turns the engine's TeX fragments into plain text a small model reads reliably. */
@@ -112,7 +171,7 @@ function plain(s: string): string {
 }
 
 /** The verified facts about a fault, written out for the model. */
-export function faultPrompt(steps: Step[], faultIndex: number): string {
+function faultFacts(steps: Step[], faultIndex: number): string {
   const fault = steps[faultIndex]
   const readable = steps.filter((s) => s.line)
   const prev = readable.filter((s) => s.index < fault.index && (s.status === 'ok' || s.status === 'start')).pop()
@@ -128,11 +187,19 @@ export function faultPrompt(steps: Step[], faultIndex: number): string {
     `In detail: ${plain(explain(d, false))}`,
   ]
   if (cx) {
-    const at = Object.entries(cx.at)
-      .map(([k, v]) => `${k} = ${v}`)
-      .join(', ')
-    facts.push(`Number check: with ${at}, ${cx.prevSays}, but ${cx.curSays}.`)
+    facts.push(`Number check: with ${cx.atText}, ${cx.prevSays}, but ${cx.curSays}.`)
   }
+  const later = steps.filter((s) => s.index > fault.index && s.line)
+  if (later.length && later.every((s) => s.status === 'carried'))
+    facts.push('The lines after the wrong line all follow correctly from it. The method after the mistake is sound; only the wrong line needs fixing.')
+  else if (later.some((s) => s.status === 'second-fault')) facts.push('There is a second, separate mistake further down, which the student will be shown separately. Talk only about this one.')
   if (d.id === 'unknown') facts.push('The checker could not name the mistake. Suggest the most likely misunderstanding, clearly marked as a guess.')
-  return `FACTS\n${facts.map((f) => `- ${f}`).join('\n')}\n\nExplain this mistake to the student.`
+  return `FACTS\n${facts.map((f) => `- ${f}`).join('\n')}`
 }
+
+/** The verified facts about a fault, with the instruction to explain it. */
+export const faultPrompt = (steps: Step[], faultIndex: number) => `${faultFacts(steps, faultIndex)}\n\nExplain this mistake to the student.`
+
+/** A follow-up question. The facts are repeated so the answer stays grounded even if an earlier reply was withheld. */
+export const followUpPrompt = (steps: Step[], faultIndex: number, question: string) =>
+  `${faultFacts(steps, faultIndex)}\n\nThe student asks: "${question}"\nAnswer using the FACTS. Do not give the final answer to the problem.`
