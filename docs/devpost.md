@@ -109,7 +109,7 @@ The checks also found a real bug: in round 1, 2 of 37 replies had lost their ope
 
 ## 4. How can people access and use it, and what results does it achieve?
 
-**Access.** Open https://vaibhavshintre.github.io/faultline/ in any modern browser. No account, no payment, no data leaves the device. For the conversational tutor use desktop Chrome 138 or later on a computer that supports Chrome's built-in model; the first use may download the model. To run from source: `npm install`, then `npm run dev` (Node 20 or later). `npm test` runs the 81 tests.
+**Access.** Open https://vaibhavshintre.github.io/faultline/ in any modern browser. No account, no payment, no data leaves the device. For the conversational tutor use desktop Chrome 138 or later on a computer that supports Chrome's built-in model; the first use may download the model. To run from source: `npm install`, then `npm run dev` (needs a current Node LTS release). `npm test` runs the 81 tests.
 
 **The main task and what success means.** Given a student's working, one step per line, Faultline must (a) mark as the fault line the first line that does not follow from the one above, (b) never mark a line that does follow, (c) name the misconception when it is one of the 19 it knows, and (d) say what the later lines are.
 
