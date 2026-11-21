@@ -31,7 +31,7 @@ Faultline combines four techniques, each used for what it is good at.
 
 **Model tracing with mal-rules.** This is the method behind cognitive tutors, going back to Brown and Burton's BUGGY (1978) and Sleeman's algebra mal-rules (1984). Faultline holds a library of documented wrong rules. It replays each one on the student's previous line, and if the result is mathematically identical to what the student wrote, that rule is the diagnosis. Because the comparison is by equivalence and not by spelling, the student can have tidied up in the same line and still be matched. When no forward rule fits, it works backwards from the student's line to find a single flipped sign or a single wrong number.
 
-**Symbolic algebra.** I wrote a small computer algebra engine in TypeScript: a parser, exact fractions on BigInt, multivariate polynomials, rational functions, exact square roots of constants and a numeric root finder. Two equations are equivalent when they have the same solution set. Two expressions are equivalent when they are equal as rational functions. This is what makes the marking trustworthy.
+**Symbolic algebra.** Faultline has its own small computer algebra engine, written in TypeScript for this project: a parser, exact fractions on BigInt, multivariate polynomials, rational functions, exact square roots of constants and a numeric root finder. Two equations are equivalent when they have the same solution set. Two expressions are equivalent when they are equal as rational functions. This is what makes the marking trustworthy.
 
 **Bayesian Knowledge Tracing.** A hidden-Markov learner model (Corbett and Anderson, 1995) estimates, for each misconception, the probability that it is gone.
 
@@ -39,13 +39,13 @@ Faultline combines four techniques, each used for what it is good at.
 
 This division of labour is the main design decision. Language models are good at wording and bad at arithmetic, so the arithmetic is done by code that cannot be wrong, and the model is given only the job it is good at.
 
-## How I built it
+## How it was built
 
 TypeScript, React and Vite, with KaTeX for rendering maths and Vitest for tests. The engine has no dependencies and no network access. The site is static and deployed to GitHub Pages by a GitHub Actions workflow that runs the tests first.
 
 There are 53 engine tests. The practice generators test themselves: before a practice problem is shown, the engine confirms that the tempting wrong step for that problem really is diagnosed as the misconception being practised.
 
-I used an AI coding assistant (Claude Code) while building it.
+The project was built with an AI coding agent (Claude Code), which did most of the implementation.
 
 ## Challenges
 
@@ -53,7 +53,7 @@ I used an AI coding assistant (Claude Code) while building it.
 - **Coincidences.** With unlucky numbers, a distribution mistake can look exactly like a sign mistake. The practice generators now reject any problem where the engine's own diagnosis is ambiguous.
 - **Keeping the model honest.** A small on-device model should not be trusted to redo the maths. The prompt gives it verified facts only, tells it those facts are final, and forbids it from giving the final answer.
 
-## What I learned
+## What I learned from it
 
 How intelligent tutoring systems actually work, and that a small, exact engine paired with a small on-device model is a good fit for a narrow task where trust, cost and privacy matter.
 
@@ -66,7 +66,7 @@ How intelligent tutoring systems actually work, and that a small, exact engine p
 
 ## Credits
 
-Solo project: design, engine, interface and video are mine, built with an AI coding assistant (Claude Code). Libraries: React, Vite, KaTeX and Vitest. Fonts: Instrument Serif, Inter and JetBrains Mono. Language model: Gemini Nano, through Chrome's built-in Prompt API. The demo video is narrated by a text-to-speech voice. No code is reused from earlier projects.
+Solo entry, built with an AI coding agent (Claude Code), which did most of the implementation and produced the demo video. Libraries: React, Vite, KaTeX and Vitest. Fonts: Instrument Serif, Inter and JetBrains Mono. Language model: Gemini Nano, through Chrome's built-in Prompt API. The demo video is narrated by a text-to-speech voice. No code is reused from earlier projects.
 
 ## What's next
 
