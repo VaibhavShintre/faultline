@@ -66,7 +66,7 @@ How intelligent tutoring systems actually work, and that a small, exact engine p
 
 ## Credits
 
-Solo entry, built with an AI coding agent (Claude Code), which did most of the implementation and produced the demo video. Libraries: React, Vite, KaTeX and Vitest. Fonts: Instrument Serif, Inter and JetBrains Mono. Language model: Gemini Nano, through Chrome's built-in Prompt API. The demo video is narrated by a text-to-speech voice. No code is reused from earlier projects.
+Solo entry, built with an AI coding agent (Claude Code), which did most of the implementation and produced the demo video. Libraries: React, Vite, KaTeX and Vitest. Fonts: Instrument Serif, Inter and JetBrains Mono. Language model: Gemini Nano, through Chrome's built-in Prompt API. The demo video is narrated by a text-to-speech voice. No code is reused from earlier projects. Faultline was built on 21 November 2026 and is entered in several student hackathons running at that time, as their rules allow.
 
 ## What's next
 
