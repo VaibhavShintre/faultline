@@ -68,6 +68,13 @@ How intelligent tutoring systems actually work, and that a small, exact engine p
 
 Solo entry, built with an AI coding agent (Claude Code), which did most of the implementation and produced the demo video. Libraries: React, Vite, KaTeX and Vitest. Fonts: Instrument Serif, Inter and JetBrains Mono. Language model: Gemini Nano, through Chrome's built-in Prompt API. The demo video is narrated by a text-to-speech voice. No code is reused from earlier projects. Faultline was built on 21 November 2026 and is entered in several student hackathons running at that time, as their rules allow.
 
+## Limits
+
+- The checker covers school algebra: polynomial and rational expressions, linear and polynomial equations in one variable, and square roots of constants. Trigonometry, logarithms, inequalities and systems of equations are not supported yet.
+- A wrong step that combines two different mistakes in one line is reported as unrecognised, with the number check still shown.
+- The on-device model is small. Its wording varies and it can be vague, which is why it is never allowed to mark work. It has not been evaluated with real students.
+- The conversational tutor needs desktop Chrome with the built-in model. Everything else works in any browser.
+
 ## What's next
 
 - Marking the lines after the fault as "consistent with your mistake" or not, so one early slip does not hide a second one
