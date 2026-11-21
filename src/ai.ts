@@ -94,7 +94,7 @@ export async function createTutor(onDownload?: (fraction: number) => void): Prom
   }
 }
 
-const clean = (s: string) => s.replace(/\*+([^*\n]+)\*+/g, '$1').replace(/\$/g, '').trim()
+const clean = (s: string) => s.replace(/(?<![\w)])\*+(?=\S)([^*\n]+?)(?<=\S)\*+(?![\w(])/g, '$1').replace(/\$/g, '').trim()
 
 /** Turns the engine's TeX fragments into plain text a small model reads reliably. */
 function plain(s: string): string {
