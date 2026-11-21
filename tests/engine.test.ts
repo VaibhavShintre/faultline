@@ -112,3 +112,44 @@ describe('diagnosis', () => {
     expect(a.steps[1].status).toBe('blank')
   })
 })
+
+import { BKT, observe } from '../src/engine/bkt'
+import { CATALOG, explain } from '../src/engine/catalog'
+import { hasTargetedPractice, isFinished, makeProblem, seeded } from '../src/engine/practice'
+import type { MisconceptionId } from '../src/engine/malrules'
+
+describe('practice generators', () => {
+  const skills = (Object.keys(CATALOG) as MisconceptionId[]).filter(hasTargetedPractice)
+  for (const skill of skills)
+    it(`${skill}: every generated problem provokes exactly that misconception`, () => {
+      const r = seeded(7)
+      for (let i = 0; i < 25; i++) {
+        const p = makeProblem(skill, r)
+        expect(idOf(p.start, p.trap), `${p.start} -> ${p.trap}`).toBe(skill)
+      }
+    })
+  it('knows when the work is finished', () => {
+    expect(isFinished('solve', parseLine('x = 3 or x = -2'))).toBe(true)
+    expect(isFinished('solve', parseLine('2x = 6'))).toBe(false)
+    expect(isFinished('simplify', parseLine('x^2 + 6x + 9'))).toBe(true)
+    expect(isFinished('simplify', parseLine('(x+3)(x+3)'))).toBe(false)
+    expect(isFinished('simplify', parseLine('x^2 + 3x + 3x + 9'))).toBe(false)
+    expect(isFinished('simplify', parseLine('5/6'))).toBe(true)
+    expect(isFinished('simplify', parseLine('x + 3'))).toBe(true)
+  })
+})
+
+describe('knowledge tracing', () => {
+  it('falls after an error and recovers with correct practice', () => {
+    const afterError = observe(undefined, false)
+    expect(afterError.p).toBeLessThan(BKT.prior)
+    let s = afterError
+    for (let i = 0; i < 4; i++) s = observe(s, true)
+    expect(s.p).toBeGreaterThan(0.9)
+    expect(s.errors).toBe(1)
+    expect(s.fixes).toBe(4)
+  })
+  it('explains every diagnosis', () => {
+    for (const id of Object.keys(CATALOG) as MisconceptionId[]) expect(explain({ id, from: 'a', wrong: 'b', right: 'c' }).length).toBeGreaterThan(20)
+  })
+})
