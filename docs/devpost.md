@@ -55,7 +55,18 @@ I used an AI coding assistant (Claude Code) while building it.
 
 ## What I learned
 
-How intelligent tutoring systems actually work, and that a small, exact engine combined with a small on-device model can beat a large model on trust, cost and privacy for a narrow task.
+How intelligent tutoring systems actually work, and that a small, exact engine paired with a small on-device model is a good fit for a narrow task where trust, cost and privacy matter.
+
+## Testing and iteration
+
+- **Automated tests.** 53 tests cover the parser, the equivalence checker, each kind of diagnosis, the practice generators and the mastery model. They run on every push before the site is deployed.
+- **Generators that test themselves.** The first version of the practice generators failed its own test: with some random numbers the tempting wrong step was accidentally correct, or looked like a different mistake. Each generator now redraws until the engine confirms the trap.
+- **Testing in the browser.** Running the full flow in Chrome turned up two interface bugs that unit tests could not: focus did not move to the new line after pressing Enter, and a line that could not be read was reported as "correct so far". Both are fixed.
+- **Tuning the tutor.** The on-device model answered slowly the first time, so one session is now loaded when the page opens and cloned for each conversation. Its replies sometimes contained Markdown symbols, which are now stripped without touching multiplication signs.
+
+## Credits
+
+Solo project: design, engine, interface and video are mine, built with an AI coding assistant (Claude Code). Libraries: React, Vite, KaTeX and Vitest. Fonts: Instrument Serif, Inter and JetBrains Mono. Language model: Gemini Nano, through Chrome's built-in Prompt API. The demo video is narrated by a text-to-speech voice. No code is reused from earlier projects.
 
 ## What's next
 
