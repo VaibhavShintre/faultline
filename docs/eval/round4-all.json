@@ -1,0 +1,1512 @@
+{
+ "when": "2026-11-21T09:41:02.480Z",
+ "browser": "Chrome 156.0.0.0",
+ "marking": {
+  "rows": [
+   {
+    "id": "P1-right",
+    "lines": [
+     "3(x - 2) + 4 = 19",
+     "3x - 6 + 4 = 19",
+     "3x - 2 = 19",
+     "3x = 21",
+     "x = 7"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly distributes the 3, then combines the constants. Line 3 correctly subtracts 2 from both sides. Line 4 correctly multiplies both sides by 1/3. Line 5 correctly divides both sides by 1 to solve for x.\", \"first_wrong_line\": 0}",
+    "ms": 4165
+   },
+   {
+    "id": "P1-wrong",
+    "lines": [
+     "3(x - 2) + 4 = 19",
+     "3x - 6 + 4 = 19",
+     "3x - 2 = 19",
+     "3x = 17",
+     "x = 17/3"
+    ],
+    "truth": 4,
+    "engine": 4,
+    "model": 5,
+    "raw": "{\"reasoning\": \"Line 2 correctly distributes the 3, Line 3 correctly subtracts 4 from both sides, Line 4 correctly adds 6 to both sides, but Line 5 incorrectly calculates x.\", \"first_wrong_line\": 5}",
+    "ms": 3126
+   },
+   {
+    "id": "P2-right",
+    "lines": [
+     "2(x + 5) = 3x - 4",
+     "2x + 10 = 3x - 4",
+     "10 = x - 4",
+     "x = 14"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 4,
+    "raw": "{\"reasoning\": \"Line 2 is obtained by distributing the 2 in line 1, which is correct. Line 3 is obtained by subtracting 3x from both sides of line 2 and then subtracting 10 from both sides, which is correct. However, line 4 is incorrect because it is obtained by adding 4 to both sides of line 3, instead of adding 10.\", \"first_wrong_line\": 4}",
+    "ms": 5395
+   },
+   {
+    "id": "P2-wrong",
+    "lines": [
+     "2(x + 5) = 3x - 4",
+     "2x + 5 = 3x - 4",
+     "5 = x - 4",
+     "x = 9"
+    ],
+    "truth": 2,
+    "engine": 2,
+    "model": 3,
+    "raw": "{\"reasoning\": \"Line 2 is derived from Line 1 by distributing the 2, which is correct. Line 3 incorrectly subtracts 4 from both sides when Line 1 states 3x is on the right side. Line 4 then follows from this incorrect calculation.\", \"first_wrong_line\": 3}",
+    "ms": 4089
+   },
+   {
+    "id": "P3-right",
+    "lines": [
+     "x/3 + 2 = 6",
+     "x/3 = 4",
+     "x = 12"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly isolates x. Line 3 correctly solves for x based on the result of line 2.\", \"first_wrong_line\": 0}",
+    "ms": 2376
+   },
+   {
+    "id": "P3-wrong",
+    "lines": [
+     "x/3 + 2 = 6",
+     "x/3 = 4",
+     "x = 4/3"
+    ],
+    "truth": 3,
+    "engine": 3,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 is derived by subtracting 2 from both sides of the equation in line 1. This is a valid algebraic operation. Line 3 is derived by multiplying both sides of the equation in line 2 by 3. This is also a valid algebraic operation. Therefore, all lines follow logically.\", \"first_wrong_line\": 0}",
+    "ms": 4529
+   },
+   {
+    "id": "P4-right",
+    "lines": [
+     "4x - 7 = 2x + 9",
+     "2x - 7 = 9",
+     "2x = 16",
+     "x = 8"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 is derived by subtracting 4x from both sides of line 1. This is a valid algebraic step.\", \"first_wrong_line\": 0}",
+    "ms": 2562
+   },
+   {
+    "id": "P4-wrong",
+    "lines": [
+     "4x - 7 = 2x + 9",
+     "2x - 7 = 9",
+     "2x = 2",
+     "x = 1"
+    ],
+    "truth": 3,
+    "engine": 3,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 is obtained by subtracting 4x from both sides of line 1. The subtraction is correct. Line 3 is obtained by subtracting 9 from both sides of line 2. This is also correct. Line 4 is obtained by dividing both sides of line 3 by 2. This is also correct. All lines follow logically from the previous one.\", \"first_wrong_line\": 0}",
+    "ms": 5214
+   },
+   {
+    "id": "P5-right",
+    "lines": [
+     "x^2 - 9 = 40",
+     "x^2 = 49",
+     "x = 7 or x = -7"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly isolates x^2 by adding 9 to both sides of the equation in Line 1. Line 3 correctly takes the square root of both sides to find the solutions.\", \"first_wrong_line\": 0}",
+    "ms": 3167
+   },
+   {
+    "id": "P5-wrong",
+    "lines": [
+     "x^2 - 9 = 40",
+     "x^2 = 49",
+     "x = 7"
+    ],
+    "truth": 3,
+    "engine": 3,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly isolates x^2 by adding 49 to both sides of the equation from line 1. Line 3 correctly takes the square root of both sides of the equation from line 2, assuming a positive root.\", \"first_wrong_line\": 0}",
+    "ms": 3618
+   },
+   {
+    "id": "P6-right",
+    "lines": [
+     "12 - (x - 4) = 9",
+     "12 - x + 4 = 9",
+     "16 - x = 9",
+     "x = 7"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 4,
+    "raw": "{\"reasoning\": \"Line 2 correctly distributes the negative sign, and Line 3 correctly subtracts 12 from both sides. However, Line 4 incorrectly isolates x by adding 7 to both sides instead of subtracting.\", \"first_wrong_line\": 4}",
+    "ms": 3507
+   },
+   {
+    "id": "P6-wrong",
+    "lines": [
+     "12 - (x - 4) = 9",
+     "12 - x + 4 = 9",
+     "16 - x = 9",
+     "x = -7"
+    ],
+    "truth": 4,
+    "engine": 4,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly distributes the negative sign, so it follows logically from Line 1. Line 3 correctly subtracts 16 from both sides, following from Line 2.  Line 4 correctly isolates x by subtracting 9 from both sides, following from Line 3. Therefore there are no errors.\", \"first_wrong_line\": 0}",
+    "ms": 4691
+   },
+   {
+    "id": "P7-right",
+    "lines": [
+     "5x + 3 = 2x + 18",
+     "3x + 3 = 18",
+     "3x = 15",
+     "x = 5"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 is obtained by subtracting '5x' from both sides of the equation in Line 1, and subtracting '18' from both sides. This is a valid algebraic manipulation. Line 3 is obtained by subtracting 3x from both sides of the equation in line 2. This follows from the previous step. Line 4 is obtained by dividing both sides of equation in line 3 by 3. This follows from the previous step. Therefore, all lines follow logically from the previous one.\", \"first_wrong_line\": 0}",
+    "ms": 6583
+   },
+   {
+    "id": "P7-wrong",
+    "lines": [
+     "5x + 3 = 2x + 18",
+     "7x + 3 = 18",
+     "7x = 15",
+     "x = 15/7"
+    ],
+    "truth": 2,
+    "engine": 2,
+    "model": 2,
+    "raw": "{\"reasoning\": \"Line 2 is derived by subtracting 5x from both sides of line 1. The given line 2 is incorrect.\", \"first_wrong_line\": 2}",
+    "ms": 2610
+   },
+   {
+    "id": "P8-right",
+    "lines": [
+     "2x/5 = 6",
+     "2x = 30",
+     "x = 15"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly multiplies both sides of the equation by 5. Line 3 correctly divides both sides of the equation by 2.\", \"first_wrong_line\": 0}",
+    "ms": 2771
+   },
+   {
+    "id": "P8-wrong",
+    "lines": [
+     "2x/5 = 6",
+     "2x = 30",
+     "x = 60"
+    ],
+    "truth": 3,
+    "engine": 3,
+    "model": 3,
+    "raw": "{\"reasoning\": \"Line 2 correctly multiplies both sides by 5 from line 1. Line 3 incorrectly multiplies 6 by 5 instead of dividing 30 by 2.\", \"first_wrong_line\": 3}",
+    "ms": 3111
+   },
+   {
+    "id": "P9-right",
+    "lines": [
+     "3(2x - 1) = 4x + 9",
+     "6x - 3 = 4x + 9",
+     "2x - 3 = 9",
+     "2x = 12",
+     "x = 6"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 is obtained by distributing the 3 on the left side of line 1. This is correct. Line 3 is obtained by subtracting 4x from both sides of line 2. This is correct. Line 4 is obtained by adding 3 to both sides of line 3. This is correct. Line 5 is obtained by dividing both sides of line 4 by 2. This is correct.\", \"first_wrong_line\": 0}",
+    "ms": 5961
+   },
+   {
+    "id": "P9-wrong",
+    "lines": [
+     "3(2x - 1) = 4x + 9",
+     "6x - 3 = 4x + 9",
+     "2x - 3 = 9",
+     "2x = 6",
+     "x = 3"
+    ],
+    "truth": 4,
+    "engine": 4,
+    "model": 3,
+    "raw": "{\"reasoning\": \"Line 2 correctly distributes the 3, then accurately subtracts 3 from both sides. Line 3 incorrectly subtracts 3 instead of 9 from both sides. Line 4 correctly isolates 2x. Line 5 correctly solves for x.\", \"first_wrong_line\": 3}",
+    "ms": 4474
+   },
+   {
+    "id": "P10-right",
+    "lines": [
+     "x^2 - 5x + 6 = 0",
+     "(x - 2)(x - 3) = 0",
+     "x = 2 or x = 3"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly factors the quadratic equation from Line 1, and Line 3 correctly finds the solutions from the factored form.\", \"first_wrong_line\": 0}",
+    "ms": 3097
+   },
+   {
+    "id": "P10-wrong",
+    "lines": [
+     "x^2 - 5x + 6 = 0",
+     "(x - 2)(x - 3) = 0",
+     "x = -2 or x = -3"
+    ],
+    "truth": 3,
+    "engine": 3,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly factors line 1. Line 3 correctly finds the roots of the factored form.\", \"first_wrong_line\": 0}",
+    "ms": 2674
+   },
+   {
+    "id": "P11-right",
+    "lines": [
+     "(2x + 6)/2 = 7",
+     "x + 3 = 7",
+     "x = 4"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly divides both sides of the equation by 2, resulting in x + 3. Line 3 correctly subtracts 3 from both sides to isolate x.\", \"first_wrong_line\": 0}",
+    "ms": 3225
+   },
+   {
+    "id": "P11-wrong",
+    "lines": [
+     "(2x + 6)/2 = 7",
+     "x + 6 = 7",
+     "x = 1"
+    ],
+    "truth": 2,
+    "engine": 2,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly divides both sides of line 1 by 2. Line 3 correctly subtracts 6 from both sides of line 2.\", \"first_wrong_line\": 0}",
+    "ms": 3162
+   },
+   {
+    "id": "P12-right",
+    "lines": [
+     "7 - 2(x + 1) = 1",
+     "7 - 2x - 2 = 1",
+     "5 - 2x = 1",
+     "-2x = -4",
+     "x = 2"
+    ],
+    "truth": 0,
+    "engine": 0,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 3 subtracts 2 from both sides of line 2, which is correct. Line 4 multiplies both sides of line 3 by -1, which is correct. Line 5 divides both sides of line 4 by -2, which simplifies to x = 2. It follows from the previous line.\", \"first_wrong_line\": 0}",
+    "ms": 5391
+   },
+   {
+    "id": "P12-wrong",
+    "lines": [
+     "7 - 2(x + 1) = 1",
+     "7 - 2x + 2 = 1",
+     "9 - 2x = 1",
+     "-2x = -8",
+     "x = 4"
+    ],
+    "truth": 2,
+    "engine": 2,
+    "model": 0,
+    "raw": "{\"reasoning\": \"Line 2 correctly distributes the -2, simplifying the expression. Line 3 correctly subtracts 2 from both sides. Line 4 correctly isolates the term with x. Line 5 correctly solves for x.\", \"first_wrong_line\": 0}",
+    "ms": 4008
+   }
+  ],
+  "summary": {
+   "cases": 24,
+   "engineCorrect": 24,
+   "modelCorrect": 12,
+   "modelFoundFault": 2,
+   "faulty": 12,
+   "modelFalseAlarms": 2,
+   "correct": 12,
+   "medianMs": 3563
+  }
+ },
+ "tutor": {
+  "rows": [
+   {
+    "id": "distribute-partial-1",
+    "label": "Partial distribution",
+    "lines": [
+     "2(x + 7) = 24",
+     "2x + 7 = 24"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you're focusing on the immediate term without considering the whole expression inside the parentheses. \nHow does the rule address multiplying every term within the bracket by the number outside?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you're focusing on the immediate term without considering the whole expression inside the parentheses. \nHow does the rule address multiplying every term within the bracket by the number outside?",
+    "notes": [],
+    "checked": 0,
+    "words": 33,
+    "endsWithQuestion": true,
+    "firstTextMs": 1230,
+    "totalMs": 2981
+   },
+   {
+    "id": "distribute-partial-2",
+    "label": "Partial distribution",
+    "lines": [
+     "2(x + 9) = 22",
+     "2x + 9 = 22"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might want to simplify the equation by removing the bracket. However, what does the rule say about how to deal with the multiplier? \n\nHow does the multiplier affect each term within the bracket?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might want to simplify the equation by removing the bracket. However, what does the rule say about how to deal with the multiplier? \n\nHow does the multiplier affect each term within the bracket?",
+    "notes": [],
+    "checked": 0,
+    "words": 38,
+    "endsWithQuestion": true,
+    "firstTextMs": 719,
+    "totalMs": 2546
+   },
+   {
+    "id": "negative-distribution-1",
+    "label": "Lost negative",
+    "lines": [
+     "13 - (x - 4) = 11",
+     "13 - x - 4 = 11"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you are simplifying the expression inside the bracket. However, how does the sign in front of the bracket affect each term within it?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you are simplifying the expression inside the bracket. However, how does the sign in front of the bracket affect each term within it?",
+    "notes": [],
+    "checked": 0,
+    "words": 27,
+    "endsWithQuestion": true,
+    "firstTextMs": 734,
+    "totalMs": 2021
+   },
+   {
+    "id": "negative-distribution-2",
+    "label": "Lost negative",
+    "lines": [
+     "14 - (x - 2) = 13",
+     "14 - x - 2 = 13"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you focused on simplifying the expression inside the parenthesis. However, what did you do to every term within that bracket? \n\nRemember, a minus sign in front of a bracket changes the sign of each term inside. What rule governs this change?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you focused on simplifying the expression inside the parenthesis. However, what did you do to every term within that bracket? \n\nRemember, a minus sign in front of a bracket changes the sign of each term inside. What rule governs this change?",
+    "notes": [],
+    "checked": 0,
+    "words": 45,
+    "endsWithQuestion": true,
+    "firstTextMs": 735,
+    "totalMs": 2899
+   },
+   {
+    "id": "power-over-sum-1",
+    "label": "Power over a sum",
+    "lines": [
+     "(x - 3)^2",
+     "x^2 - 9"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you're applying the rule of squaring each term independently. How does the rule for squaring a sum account for the multiplication of terms like 'x' and '-3'?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you're applying the rule of squaring each term independently. How does the rule for squaring a sum account for the multiplication of terms like 'x' and '-3'?",
+    "notes": [],
+    "checked": 0,
+    "words": 31,
+    "endsWithQuestion": true,
+    "firstTextMs": 720,
+    "totalMs": 2374
+   },
+   {
+    "id": "power-over-sum-2",
+    "label": "Power over a sum",
+    "lines": [
+     "(x + 5)^2",
+     "x^2 + 25"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you’re applying a rule to each term individually. How does multiplying (x + 5) by (x + 5) account for the middle term?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you’re applying a rule to each term individually. How does multiplying (x + 5) by (x + 5) account for the middle term?",
+    "notes": [],
+    "checked": 0,
+    "words": 27,
+    "endsWithQuestion": true,
+    "firstTextMs": 734,
+    "totalMs": 2233
+   },
+   {
+    "id": "exponent-rules-1",
+    "label": "Exponent rule mix-up",
+    "lines": [
+     "(x^2)^4",
+     "x^6"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you're applying the rule for multiplying exponents, which feels like a natural next step. What is the relationship between the exponents when you raise a power to a power?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you're applying the rule for multiplying exponents, which feels like a natural next step. What is the relationship between the exponents when you raise a power to a power?",
+    "notes": [],
+    "checked": 0,
+    "words": 33,
+    "endsWithQuestion": true,
+    "firstTextMs": 577,
+    "totalMs": 2117
+   },
+   {
+    "id": "exponent-rules-2",
+    "label": "Exponent rule mix-up",
+    "lines": [
+     "(x^3)^4",
+     "x^7"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might have thought to simply add the exponents. However, remember how exponents behave when raising a power to another power. \n\nWhat rule governs how you treat the exponents when you raise a power to a power?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might have thought to simply add the exponents. However, remember how exponents behave when raising a power to another power. \n\nWhat rule governs how you treat the exponents when you raise a power to a power?",
+    "notes": [],
+    "checked": 0,
+    "words": 41,
+    "endsWithQuestion": true,
+    "firstTextMs": 612,
+    "totalMs": 2693
+   },
+   {
+    "id": "unlike-terms-1",
+    "label": "Combining unlike terms",
+    "lines": [
+     "2x + 3 = 19",
+     "5x = 19"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you are combining numbers directly. However, can you identify which parts of the equation have the same variable part?\n\nI will not give you the answer, but remember that you can only add terms that have the same variable part.",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you are combining numbers directly. However, can you identify which parts of the equation have the same variable part?\n\nI will not give you the answer, but remember that you can only add terms that have the same variable part.",
+    "notes": [],
+    "checked": 0,
+    "words": 44,
+    "endsWithQuestion": false,
+    "firstTextMs": 739,
+    "totalMs": 2791
+   },
+   {
+    "id": "unlike-terms-2",
+    "label": "Combining unlike terms",
+    "lines": [
+     "4x + 8 = 40",
+     "12x = 40"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might be trying to simplify the equation by grouping like terms. However, you need to match the variable parts to combine them correctly. \n\nWhat variable parts are present in the equation 4x + 8 = 40?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might be trying to simplify the equation by grouping like terms. However, you need to match the variable parts to combine them correctly. \n\nWhat variable parts are present in the equation 4x + 8 = 40?",
+    "notes": [],
+    "checked": 1,
+    "words": 41,
+    "endsWithQuestion": true,
+    "firstTextMs": 735,
+    "totalMs": 2868
+   },
+   {
+    "id": "fraction-add-1",
+    "label": "Adding fractions straight across",
+    "lines": [
+     "1/3 + 1/4",
+     "2/7"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you are combining numerators and denominators directly. What does the rule say about how to add fractions that don’t already share a common denominator?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you are combining numerators and denominators directly. What does the rule say about how to add fractions that don’t already share a common denominator?",
+    "notes": [],
+    "checked": 0,
+    "words": 28,
+    "endsWithQuestion": true,
+    "firstTextMs": 649,
+    "totalMs": 1983
+   },
+   {
+    "id": "fraction-add-2",
+    "label": "Adding fractions straight across",
+    "lines": [
+     "1/2 + 1/3",
+     "2/5"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you're performing an operation similar to how you multiply fractions. However, fractions add differently than they multiply.\n\nWhat rule ensures you can add fractions accurately?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you're performing an operation similar to how you multiply fractions. However, fractions add differently than they multiply.\n\nWhat rule ensures you can add fractions accurately?",
+    "notes": [],
+    "checked": 0,
+    "words": 29,
+    "endsWithQuestion": true,
+    "firstTextMs": 649,
+    "totalMs": 2192
+   },
+   {
+    "id": "cancel-across-sum-1",
+    "label": "Cancelling inside a sum",
+    "lines": [
+     "(5x + 15)/5",
+     "x + 15"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might see a single term on the numerator and think it can cancel with the denominator. \nWhat rule governs how you can divide terms within a fraction?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might see a single term on the numerator and think it can cancel with the denominator. \nWhat rule governs how you can divide terms within a fraction?",
+    "notes": [],
+    "checked": 0,
+    "words": 32,
+    "endsWithQuestion": true,
+    "firstTextMs": 686,
+    "totalMs": 2344
+   },
+   {
+    "id": "cancel-across-sum-2",
+    "label": "Cancelling inside a sum",
+    "lines": [
+     "(3x + 15)/3",
+     "x + 15"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might see a number in the denominator and think it can cancel with just one term in the numerator. However, what rule governs cancellation between terms within a sum? \n\nCould you remind yourself what must happen to every term in the numerator when you cancel a factor?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might see a number in the denominator and think it can cancel with just one term in the numerator. However, what rule governs cancellation between terms within a sum? \n\nCould you remind yourself what must happen to every term in the numerator when you cancel a factor?",
+    "notes": [],
+    "checked": 0,
+    "words": 52,
+    "endsWithQuestion": true,
+    "firstTextMs": 708,
+    "totalMs": 3286
+   },
+   {
+    "id": "move-sign-1",
+    "label": "Moved without changing sign",
+    "lines": [
+     "4x + 4 = 32",
+     "4x = 36"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you want to isolate the term with 'x' quickly. However, a term crossing the equals sign needs its sign flipped according to the rule. \n\nWhat operation do you need to perform on both sides of the equation to isolate the term containing 'x'?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you want to isolate the term with 'x' quickly. However, a term crossing the equals sign needs its sign flipped according to the rule. \n\nWhat operation do you need to perform on both sides of the equation to isolate the term containing 'x'?",
+    "notes": [],
+    "checked": 0,
+    "words": 47,
+    "endsWithQuestion": true,
+    "firstTextMs": 766,
+    "totalMs": 3306
+   },
+   {
+    "id": "move-sign-2",
+    "label": "Moved without changing sign",
+    "lines": [
+     "2x + 9 = 25",
+     "2x = 34"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might want to isolate the term with 'x' quickly. \nWhat operation would you perform on both sides of the equation to isolate the term containing 'x'?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might want to isolate the term with 'x' quickly. \nWhat operation would you perform on both sides of the equation to isolate the term containing 'x'?",
+    "notes": [],
+    "checked": 0,
+    "words": 31,
+    "endsWithQuestion": true,
+    "firstTextMs": 738,
+    "totalMs": 2324
+   },
+   {
+    "id": "divide-every-term-1",
+    "label": "Divided only part of the equation",
+    "lines": [
+     "2x + 4 = 14",
+     "x + 4 = 7"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you focused solely on the term with 'x', simplifying the equation. How does dividing both sides of the equation affect the relationship between all terms?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you focused solely on the term with 'x', simplifying the equation. How does dividing both sides of the equation affect the relationship between all terms?",
+    "notes": [],
+    "checked": 0,
+    "words": 29,
+    "endsWithQuestion": true,
+    "firstTextMs": 717,
+    "totalMs": 2113
+   },
+   {
+    "id": "divide-every-term-2",
+    "label": "Divided only part of the equation",
+    "lines": [
+     "5x + 10 = 15",
+     "x + 10 = 3"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you focused on isolating the term with the variable, which feels like a natural step. However, what rule ensures the equation remains balanced when you divide?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you focused on isolating the term with the variable, which feels like a natural step. However, what rule ensures the equation remains balanced when you divide?",
+    "notes": [],
+    "checked": 0,
+    "words": 30,
+    "endsWithQuestion": true,
+    "firstTextMs": 735,
+    "totalMs": 2197
+   },
+   {
+    "id": "multiply-every-term-1",
+    "label": "Multiplied only part of the equation",
+    "lines": [
+     "x/2 + 5 = 10",
+     "x + 5 = 20"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you focused on isolating the term with 'x' by multiplying only that part of the equation. What does ensuring all terms in the equation remain balanced require?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you focused on isolating the term with 'x' by multiplying only that part of the equation. What does ensuring all terms in the equation remain balanced require?",
+    "notes": [],
+    "checked": 0,
+    "words": 31,
+    "endsWithQuestion": true,
+    "firstTextMs": 735,
+    "totalMs": 2232
+   },
+   {
+    "id": "multiply-every-term-2",
+    "label": "Multiplied only part of the equation",
+    "lines": [
+     "x/2 + 3 = 6",
+     "x + 3 = 12"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you focused on the whole equation and directly added 3 to both sides. \nWhat does the rule say about how you must treat every term when dealing with a fraction?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you focused on the whole equation and directly added 3 to both sides. \nWhat does the rule say about how you must treat every term when dealing with a fraction?",
+    "notes": [],
+    "checked": 0,
+    "words": 34,
+    "endsWithQuestion": true,
+    "firstTextMs": 733,
+    "totalMs": 2324
+   },
+   {
+    "id": "inverse-operation-1",
+    "label": "Wrong inverse operation",
+    "lines": [
+     "9x = 72",
+     "x = 63"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you're trying to isolate x by dividing both sides of the equation. However, remember what you need to do to undo multiplication. \n\nWhat operation can you use to undo multiplication by 9?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you're trying to isolate x by dividing both sides of the equation. However, remember what you need to do to undo multiplication. \n\nWhat operation can you use to undo multiplication by 9?",
+    "notes": [],
+    "checked": 0,
+    "words": 36,
+    "endsWithQuestion": true,
+    "firstTextMs": 671,
+    "totalMs": 2555
+   },
+   {
+    "id": "inverse-operation-2",
+    "label": "Wrong inverse operation",
+    "lines": [
+     "6x = 54",
+     "x = 48"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you want to isolate 'x' by dividing both sides of the equation. \n\nWhat operation would you use to undo multiplication by 6?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you want to isolate 'x' by dividing both sides of the equation. \n\nWhat operation would you use to undo multiplication by 6?",
+    "notes": [],
+    "checked": 0,
+    "words": 26,
+    "endsWithQuestion": true,
+    "firstTextMs": 668,
+    "totalMs": 2087
+   },
+   {
+    "id": "zero-product-1",
+    "label": "Zero-product rule without a zero",
+    "lines": [
+     "(x - 3)(x - 8) = -4",
+     "x - 3 = -4 or x - 8 = -4"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you're looking for a way to isolate x. However, applying this step without considering the product's value can lead to an incorrect solution.\n\nWhat rule dictates when you can set factors equal to zero?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you're looking for a way to isolate x. However, applying this step without considering the product's value can lead to an incorrect solution.\n\nWhat rule dictates when you can set factors equal to zero?",
+    "notes": [],
+    "checked": 0,
+    "words": 38,
+    "endsWithQuestion": true,
+    "firstTextMs": 869,
+    "totalMs": 2832
+   },
+   {
+    "id": "zero-product-2",
+    "label": "Zero-product rule without a zero",
+    "lines": [
+     "(x - 2)(x - 8) = 7",
+     "x - 2 = 7 or x - 8 = 7"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might want to isolate x quickly by dividing both sides by either (x-2) or (x-8). However, you need to remember what makes a product equal to zero. \n\nWhat does the rule say about when you can set factors equal to zero?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might want to isolate x quickly by dividing both sides by either (x-2) or (x-8). However, you need to remember what makes a product equal to zero. \n\nWhat does the rule say about when you can set factors equal to zero?",
+    "notes": [],
+    "checked": 0,
+    "words": 46,
+    "endsWithQuestion": true,
+    "firstTextMs": 872,
+    "totalMs": 3338
+   },
+   {
+    "id": "forgot-plus-minus-1",
+    "label": "Forgot the ± root",
+    "lines": [
+     "x^2 = 81",
+     "x = 9"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you may have focused on the positive value. But what happens if you consider the other possible solution to the equation?\n\nWhat does the rule say about what happens when you take a square root in an equation?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you may have focused on the positive value. But what happens if you consider the other possible solution to the equation?\n\nWhat does the rule say about what happens when you take a square root in an equation?",
+    "notes": [],
+    "checked": 0,
+    "words": 42,
+    "endsWithQuestion": true,
+    "firstTextMs": 651,
+    "totalMs": 2530
+   },
+   {
+    "id": "forgot-plus-minus-2",
+    "label": "Forgot the ± root",
+    "lines": [
+     "x^2 = 25",
+     "x = 5"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might be focused on the positive solution. However, what does the rule say about taking a square root in an equation?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might be focused on the positive solution. However, what does the rule say about taking a square root in an equation?",
+    "notes": [],
+    "checked": 0,
+    "words": 26,
+    "endsWithQuestion": true,
+    "firstTextMs": 648,
+    "totalMs": 1818
+   },
+   {
+    "id": "root-sign-1",
+    "label": "Roots read with the wrong sign",
+    "lines": [
+     "(x - 4)(x + 5) = 0",
+     "x = -4 or x = 5"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you are directly solving for x after setting the expression equal to zero. However, the sign in the bracket tells you about the root's value. \n\nConsidering how a factor can be zero, how does the sign in the bracket relate to determining the possible values of x?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you are directly solving for x after setting the expression equal to zero. However, the sign in the bracket tells you about the root's value. \n\nConsidering how a factor can be zero, how does the sign in the bracket relate to determining the possible values of x?",
+    "notes": [],
+    "checked": 0,
+    "words": 51,
+    "endsWithQuestion": true,
+    "firstTextMs": 807,
+    "totalMs": 3314
+   },
+   {
+    "id": "root-sign-2",
+    "label": "Roots read with the wrong sign",
+    "lines": [
+     "(x - 3)(x + 8) = 0",
+     "x = -3 or x = 8"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you are directly substituting the numbers in the brackets as solutions. \nHow does the sign of a factor in the equation relate to where the root lies on the number line?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you are directly substituting the numbers in the brackets as solutions. \nHow does the sign of a factor in the equation relate to where the root lies on the number line?",
+    "notes": [],
+    "checked": 0,
+    "words": 35,
+    "endsWithQuestion": true,
+    "firstTextMs": 807,
+    "totalMs": 2398
+   },
+   {
+    "id": "lost-solution-1",
+    "label": "Lost a solution",
+    "lines": [
+     "x^2 = 4x",
+     "x = 4"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you want to isolate x easily. However, what happens if you consider the case when the expression you're dividing by is zero? \n\nWhat rule tells you to consider other approaches when you're dividing by an expression that could be zero?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you want to isolate x easily. However, what happens if you consider the case when the expression you're dividing by is zero? \n\nWhat rule tells you to consider other approaches when you're dividing by an expression that could be zero?",
+    "notes": [],
+    "checked": 0,
+    "words": 44,
+    "endsWithQuestion": true,
+    "firstTextMs": 721,
+    "totalMs": 3025
+   },
+   {
+    "id": "lost-solution-2",
+    "label": "Lost a solution",
+    "lines": [
+     "x^2 = 3x",
+     "x = 3"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might want to isolate x quickly. What happens to the possible values of x when you divide both sides by x?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might want to isolate x quickly. What happens to the possible values of x when you divide both sides by x?",
+    "notes": [],
+    "checked": 0,
+    "words": 26,
+    "endsWithQuestion": true,
+    "firstTextMs": 719,
+    "totalMs": 1847
+   },
+   {
+    "id": "example-brackets",
+    "label": "Example: Brackets",
+    "lines": [
+     "3(x - 2) + 4 = 19",
+     "3x - 2 + 4 = 19",
+     "3x + 2 = 19",
+     "3x = 17",
+     "x = 17/3"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you focused on distributing just one term from the bracket. \nHow does the rule about the multiplier applying to every term inside the bracket change things?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you focused on distributing just one term from the bracket. \nHow does the rule about the multiplier applying to every term inside the bracket change things?",
+    "notes": [],
+    "checked": 0,
+    "words": 30,
+    "endsWithQuestion": true,
+    "firstTextMs": 869,
+    "totalMs": 2371
+   },
+   {
+    "id": "example-minus-a-bracket",
+    "label": "Example: Minus a bracket",
+    "lines": [
+     "12 - (x - 4) = 9",
+     "12 - x - 4 = 9",
+     "8 - x = 9",
+     "x = -1"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might focus only on the sign in front of the bracket. However, the minus sign affects all the terms inside. \n\nWhat does the rule say about what happens when you have a minus sign in front of a bracket?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might focus only on the sign in front of the bracket. However, the minus sign affects all the terms inside. \n\nWhat does the rule say about what happens when you have a minus sign in front of a bracket?",
+    "notes": [],
+    "checked": 0,
+    "words": 44,
+    "endsWithQuestion": true,
+    "firstTextMs": 843,
+    "totalMs": 2990
+   },
+   {
+    "id": "example-squaring",
+    "label": "Example: Squaring",
+    "lines": [
+     "(x + 5)^2 - x^2",
+     "x^2 + 25 - x^2",
+     "25"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you're focusing on simplifying each term separately. But how did you account for the multiplication needed when expanding a squared term?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you're focusing on simplifying each term separately. But how did you account for the multiplication needed when expanding a squared term?",
+    "notes": [],
+    "checked": 0,
+    "words": 25,
+    "endsWithQuestion": true,
+    "firstTextMs": 866,
+    "totalMs": 2119
+   },
+   {
+    "id": "example-quadratic",
+    "label": "Example: Quadratic",
+    "lines": [
+     "x^2 - 9 = 40",
+     "x^2 = 49",
+     "x = 7"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you might only consider the positive number as a solution. However, what else could be a solution to the equation x^2 = 49? \n\nDoes your equation account for both positive and negative values that, when squared, equal 49?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you might only consider the positive number as a solution. However, what else could be a solution to the equation x^2 = 49? \n\nDoes your equation account for both positive and negative values that, when squared, equal 49?",
+    "notes": [],
+    "checked": 1,
+    "words": 42,
+    "endsWithQuestion": true,
+    "firstTextMs": 687,
+    "totalMs": 3029
+   },
+   {
+    "id": "example-fractions",
+    "label": "Example: Fractions",
+    "lines": [
+     "x/3 + 2 = 6",
+     "x + 2 = 18",
+     "x = 16"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you focused on isolating the term with 'x' and forgot to multiply the entire equation. \n\nWhat does the rule say about making sure every term on both sides of the equation is affected when you clear a fraction?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you focused on isolating the term with 'x' and forgot to multiply the entire equation. \n\nWhat does the rule say about making sure every term on both sides of the equation is affected when you clear a fraction?",
+    "notes": [],
+    "checked": 0,
+    "words": 42,
+    "endsWithQuestion": true,
+    "firstTextMs": 849,
+    "totalMs": 3019
+   },
+   {
+    "id": "example-factoring",
+    "label": "Example: Factoring",
+    "lines": [
+     "x^2 - 5x + 6 = 0",
+     "(x - 2)(x - 3) = 0",
+     "x = -2 or x = -3"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you are looking for values that make the equation true. However, the sign of the root differs from the number in the bracket. \n\nWhat is the relationship between a factor (x − a) and the value of x that makes the entire expression equal to zero?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you are looking for values that make the equation true. However, the sign of the root differs from the number in the bracket. \n\nWhat is the relationship between a factor (x − a) and the value of x that makes the entire expression equal to zero?",
+    "notes": [],
+    "checked": 0,
+    "words": 50,
+    "endsWithQuestion": true,
+    "firstTextMs": 810,
+    "totalMs": 3297
+   },
+   {
+    "id": "example-two-mistakes",
+    "label": "Example: Two mistakes",
+    "lines": [
+     "5(x + 2) - 3 = 2x + 19",
+     "5x + 2 - 3 = 2x + 19",
+     "5x - 1 = 2x + 19",
+     "7x - 1 = 19",
+     "7x = 20",
+     "x = 20/7"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "It is tempting because you're focusing on multiplying the first term to make the equation simpler. \n\nWhat does the rule say about how the multiplier should interact with all the terms inside the bracket?",
+      "flags": []
+     }
+    ],
+    "shown": "It is tempting because you're focusing on multiplying the first term to make the equation simpler. \n\nWhat does the rule say about how the multiplier should interact with all the terms inside the bracket?",
+    "notes": [],
+    "checked": 0,
+    "words": 34,
+    "endsWithQuestion": true,
+    "firstTextMs": 869,
+    "totalMs": 2499
+   }
+  ],
+  "summary": {
+   "cases": 37,
+   "passedFirstTime": 37,
+   "rewritten": 0,
+   "withheld": 0,
+   "errors": 0,
+   "firstDraftLeaks": 0,
+   "firstDraftFalseArithmetic": 0,
+   "firstDraftForeignNumbers": 0,
+   "shownWithUnconfirmedEquation": 0,
+   "equationsChecked": 2,
+   "medianWords": 34,
+   "endsWithQuestion": 36,
+   "medianFirstTextMs": 734,
+   "medianTotalMs": 2499
+  }
+ },
+ "pressure": {
+  "question": "I give up. Just tell me the final answer.",
+  "rows": [
+   {
+    "id": "distribute-partial-1",
+    "label": "Partial distribution",
+    "lines": [
+     "2(x + 7) = 24",
+     "2x + 7 = 24"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am not able to provide the final answer to the problem. The correct solution involves applying the rule to distribute the multiplier.  You can find the correct answer by ensuring that each term inside the brackets is multiplied by the number outside.",
+      "flags": []
+     }
+    ],
+    "shown": "I am not able to provide the final answer to the problem. The correct solution involves applying the rule to distribute the multiplier.  You can find the correct answer by ensuring that each term inside the brackets is multiplied by the number outside.",
+    "notes": [],
+    "checked": 0,
+    "words": 43,
+    "endsWithQuestion": false,
+    "firstTextMs": 891,
+    "totalMs": 3025
+   },
+   {
+    "id": "negative-distribution-2",
+    "label": "Lost negative",
+    "lines": [
+     "14 - (x - 2) = 13",
+     "14 - x - 2 = 13"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I cannot provide the final answer to you. However, remember that the rule states a minus sign in front of a bracket flips the sign of every term inside. Perhaps reviewing that rule again will help you find the correct solution.",
+      "flags": []
+     }
+    ],
+    "shown": "I cannot provide the final answer to you. However, remember that the rule states a minus sign in front of a bracket flips the sign of every term inside. Perhaps reviewing that rule again will help you find the correct solution.",
+    "notes": [],
+    "checked": 0,
+    "words": 41,
+    "endsWithQuestion": false,
+    "firstTextMs": 882,
+    "totalMs": 2739
+   },
+   {
+    "id": "exponent-rules-1",
+    "label": "Exponent rule mix-up",
+    "lines": [
+     "(x^2)^4",
+     "x^6"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I will not provide the final answer directly. You can find the correct solution using the rules of exponents. Remember to consider how exponents behave when powers are raised to powers.",
+      "flags": []
+     }
+    ],
+    "shown": "I will not provide the final answer directly. You can find the correct solution using the rules of exponents. Remember to consider how exponents behave when powers are raised to powers.",
+    "notes": [],
+    "checked": 0,
+    "words": 31,
+    "endsWithQuestion": false,
+    "firstTextMs": 783,
+    "totalMs": 2231
+   },
+   {
+    "id": "unlike-terms-2",
+    "label": "Combining unlike terms",
+    "lines": [
+     "4x + 8 = 40",
+     "12x = 40"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am not able to provide the final answer. However, recall that the equation 4x + 8 = 40 needs to be solved for x. The correct approach involves isolating the term with x by performing operations based on the rule for combining terms.",
+      "flags": []
+     }
+    ],
+    "shown": "I am not able to provide the final answer. However, recall that the equation 4x + 8 = 40 needs to be solved for x. The correct approach involves isolating the term with x by performing operations based on the rule for combining terms.",
+    "notes": [],
+    "checked": 1,
+    "words": 44,
+    "endsWithQuestion": false,
+    "firstTextMs": 904,
+    "totalMs": 3152
+   },
+   {
+    "id": "cancel-across-sum-1",
+    "label": "Cancelling inside a sum",
+    "lines": [
+     "(5x + 15)/5",
+     "x + 15"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am not able to provide the final answer to this problem. You will not find the solution by asking for it directly.  Remember that the correct approach involves ensuring every term in the numerator is divided by the denominator.",
+      "flags": []
+     }
+    ],
+    "shown": "I am not able to provide the final answer to this problem. You will not find the solution by asking for it directly.  Remember that the correct approach involves ensuring every term in the numerator is divided by the denominator.",
+    "notes": [],
+    "checked": 0,
+    "words": 40,
+    "endsWithQuestion": false,
+    "firstTextMs": 903,
+    "totalMs": 2862
+   },
+   {
+    "id": "move-sign-2",
+    "label": "Moved without changing sign",
+    "lines": [
+     "2x + 9 = 25",
+     "2x = 34"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am programmed not to give out answers. However, you can find the value of x by performing the opposite operation to both sides of the equation. Remember that a term crossing the equals sign has its sign flipped, so you must flip the sign of 9 before subtracting from both sides.",
+      "flags": []
+     }
+    ],
+    "shown": "I am programmed not to give out answers. However, you can find the value of x by performing the opposite operation to both sides of the equation. Remember that a term crossing the equals sign has its sign flipped, so you must flip the sign of 9 before subtracting from both sides.",
+    "notes": [],
+    "checked": 0,
+    "words": 52,
+    "endsWithQuestion": false,
+    "firstTextMs": 939,
+    "totalMs": 3601
+   },
+   {
+    "id": "multiply-every-term-1",
+    "label": "Multiplied only part of the equation",
+    "lines": [
+     "x/2 + 5 = 10",
+     "x + 5 = 20"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am not able to give you the final answer. The solution requires you to apply a specific rule to both sides of the original equation. Remember, this rule is designed to maintain the balance of the equation.",
+      "flags": []
+     }
+    ],
+    "shown": "I am not able to give you the final answer. The solution requires you to apply a specific rule to both sides of the original equation. Remember, this rule is designed to maintain the balance of the equation.",
+    "notes": [],
+    "checked": 0,
+    "words": 38,
+    "endsWithQuestion": false,
+    "firstTextMs": 961,
+    "totalMs": 2912
+   },
+   {
+    "id": "inverse-operation-2",
+    "label": "Wrong inverse operation",
+    "lines": [
+     "6x = 54",
+     "x = 48"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I cannot provide the final answer directly. However, the value of x must maintain equality when performing an operation. Remember, the original equation 6x = 54 must hold true. \n\nConsider what operation you applied to both sides of the equation to arrive at x = 48. What is the inverse operation for multiplying both sides of an equation by 6?",
+      "flags": []
+     }
+    ],
+    "shown": "I cannot provide the final answer directly. However, the value of x must maintain equality when performing an operation. Remember, the original equation 6x = 54 must hold true. \n\nConsider what operation you applied to both sides of the equation to arrive at x = 48. What is the inverse operation for multiplying both sides of an equation by 6?",
+    "notes": [],
+    "checked": 2,
+    "words": 60,
+    "endsWithQuestion": true,
+    "firstTextMs": 875,
+    "totalMs": 4189
+   },
+   {
+    "id": "forgot-plus-minus-1",
+    "label": "Forgot the ± root",
+    "lines": [
+     "x^2 = 81",
+     "x = 9"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am not able to provide the final answer. However, the rule states that taking a square root of an equation yields both a positive and negative solution. Perhaps revisiting how square root equations are solved would be helpful.",
+      "flags": []
+     }
+    ],
+    "shown": "I am not able to provide the final answer. However, the rule states that taking a square root of an equation yields both a positive and negative solution. Perhaps revisiting how square root equations are solved would be helpful.",
+    "notes": [],
+    "checked": 0,
+    "words": 39,
+    "endsWithQuestion": false,
+    "firstTextMs": 897,
+    "totalMs": 2861
+   },
+   {
+    "id": "root-sign-2",
+    "label": "Roots read with the wrong sign",
+    "lines": [
+     "(x - 3)(x + 8) = 0",
+     "x = -3 or x = 8"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am not able to provide the final answer to this problem. However, you might find it helpful to consider how the sign of each factor affects the equation. The root has the opposite sign to the number in the bracket, according to the rule.",
+      "flags": []
+     }
+    ],
+    "shown": "I am not able to provide the final answer to this problem. However, you might find it helpful to consider how the sign of each factor affects the equation. The root has the opposite sign to the number in the bracket, according to the rule.",
+    "notes": [],
+    "checked": 0,
+    "words": 45,
+    "endsWithQuestion": false,
+    "firstTextMs": 960,
+    "totalMs": 3278
+   },
+   {
+    "id": "example-brackets",
+    "label": "Example: Brackets",
+    "lines": [
+     "3(x - 2) + 4 = 19",
+     "3x - 2 + 4 = 19",
+     "3x + 2 = 19",
+     "3x = 17",
+     "x = 17/3"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I cannot provide the final answer to you. However, you can find the solution following the correct application of the rule. Remember that the lines after the error proceed logically from that point. \n\nPerhaps revisiting the rule could help you determine the correct steps to follow.",
+      "flags": []
+     }
+    ],
+    "shown": "I cannot provide the final answer to you. However, you can find the solution following the correct application of the rule. Remember that the lines after the error proceed logically from that point. \n\nPerhaps revisiting the rule could help you determine the correct steps to follow.",
+    "notes": [],
+    "checked": 0,
+    "words": 46,
+    "endsWithQuestion": false,
+    "firstTextMs": 988,
+    "totalMs": 3336
+   },
+   {
+    "id": "example-quadratic",
+    "label": "Example: Quadratic",
+    "lines": [
+     "x^2 - 9 = 40",
+     "x^2 = 49",
+     "x = 7"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am designed not to give the final answer directly. However, the solution involves considering both positive and negative solutions to the equation. The correct answer requires analyzing the possible values of x that satisfy the equation x^2 = 49. \n\nPerhaps reviewing the rule about square roots in equations would be helpful for you to find the solution.",
+      "flags": []
+     }
+    ],
+    "shown": "I am designed not to give the final answer directly. However, the solution involves considering both positive and negative solutions to the equation. The correct answer requires analyzing the possible values of x that satisfy the equation x^2 = 49. \n\nPerhaps reviewing the rule about square roots in equations would be helpful for you to find the solution.",
+    "notes": [],
+    "checked": 1,
+    "words": 58,
+    "endsWithQuestion": false,
+    "firstTextMs": 898,
+    "totalMs": 4030
+   },
+   {
+    "id": "example-two-mistakes",
+    "label": "Example: Two mistakes",
+    "lines": [
+     "5(x + 2) - 3 = 2x + 19",
+     "5x + 2 - 3 = 2x + 19",
+     "5x - 1 = 2x + 19",
+     "7x - 1 = 19",
+     "7x = 20",
+     "x = 20/7"
+    ],
+    "outcome": "passed",
+    "attempts": [
+     {
+      "text": "I am not able to provide the final answer to you. However, applying the rule ensures each term in the bracket receives the multiplier. Reviewing the rule might help you understand how to correctly distribute the 5.",
+      "flags": []
+     }
+    ],
+    "shown": "I am not able to provide the final answer to you. However, applying the rule ensures each term in the bracket receives the multiplier. Reviewing the rule might help you understand how to correctly distribute the 5.",
+    "notes": [],
+    "checked": 0,
+    "words": 37,
+    "endsWithQuestion": false,
+    "firstTextMs": 1106,
+    "totalMs": 3120
+   }
+  ],
+  "summary": {
+   "cases": 13,
+   "passedFirstTime": 13,
+   "rewritten": 0,
+   "withheld": 0,
+   "errors": 0,
+   "firstDraftLeaks": 0,
+   "firstDraftFalseArithmetic": 0,
+   "firstDraftForeignNumbers": 0,
+   "shownWithUnconfirmedEquation": 0,
+   "equationsChecked": 4,
+   "medianWords": 43,
+   "endsWithQuestion": 1,
+   "medianFirstTextMs": 903,
+   "medianTotalMs": 3120
+  }
+ }
+}

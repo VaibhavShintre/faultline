@@ -3,7 +3,15 @@ import { analyze } from '../src/engine/analyze'
 import { guardContext, inspectReply, isHard, mathRuns } from '../src/guard'
 
 const ctxOf = (...lines: string[]) => guardContext(analyze(lines))!
-const kinds = (text: string, ...lines: string[]) => inspectReply(text, ctxOf(...lines)).flags.map((f) => f.kind)
+// The equation checks and the number check are tested separately, so each test reads cleanly.
+const kinds = (text: string, ...lines: string[]) =>
+  inspectReply(text, ctxOf(...lines))
+    .flags.map((f) => f.kind)
+    .filter((k) => k !== 'foreign-number')
+const strangeNumbers = (text: string, ...lines: string[]) =>
+  inspectReply(text, ctxOf(...lines))
+    .flags.filter((f) => f.kind === 'foreign-number')
+    .map((f) => f.quote)
 
 const BRACKETS = ['3(x - 2) + 4 = 19', '3x - 2 + 4 = 19', '3x + 2 = 19', '3x = 17', 'x = 17/3']
 
@@ -16,6 +24,9 @@ describe('reading maths out of prose', () => {
     expect(mathRuns('(for example 2x + 3 = 11).', new Set(['x']))).toEqual(['2x + 3 = 11'])
     expect(mathRuns('That gives x = 4.', new Set(['x']))).toEqual(['x = 4'])
   })
+  it('stops at the end of a sentence but keeps decimal points', () => {
+    expect(mathRuns('Consider x = 2. (x + 5)^2 equals 49 there, and 0.5 + 0.5 = 1.', new Set(['x']))).toEqual(['x = 2', '(x + 5)^2', '49', '0.5 + 0.5 = 1'])
+  })
   it('does not treat ordinary words as variables', () => {
     expect(mathRuns('a bracket is a group, and I think so too', new Set(['x']))).toEqual([])
   })
@@ -24,7 +35,7 @@ describe('reading maths out of prose', () => {
 describe('tutor guard', () => {
   it('passes a reply that only uses the facts', () => {
     const reply =
-      'You turned 3(x - 2) into 3x - 2, so the 3 only reached the x. It is tempting because the 3 sits right next to the x, but 3(x - 2) = 3x - 6. What should happen to the 2?'
+      'You turned 3(x - 2) into 3x - 2, so the 3 only reached the x. It is tempting because the 3 sits right next to the x. You then wrote 3x + 2 = 19. What should happen to the 2?'
     const found = inspectReply(reply, ctxOf(...BRACKETS))
     expect(found.flags).toEqual([])
     expect(found.checked).toBe(1)
@@ -63,9 +74,23 @@ describe('tutor guard', () => {
   })
 
   it('reports an equation it cannot stand behind, without treating it as fatal', () => {
-    const flags = inspectReply('So you should get 3x + 9 = 19 next.', ctxOf(...BRACKETS)).flags
+    const flags = inspectReply('So you should get 3x + 4 = 17 next.', ctxOf(...BRACKETS)).flags
     expect(flags.map((f) => f.kind)).toEqual(['unverified-equation'])
     expect(flags.some(isHard)).toBe(false)
+  })
+
+  it('catches a number the model brought in from nowhere', () => {
+    expect(strangeNumbers('You took 9 away from 72 to get 63.', '9x = 72', 'x = 63')).toEqual([])
+    expect(strangeNumbers('You wrote 63 instead of 7.', '9x = 72', 'x = 63')).toEqual(['7'])
+    expect(strangeNumbers('If a product equals 6, each factor can equal 6.', '(x - 2)(x - 8) = 7', 'x - 2 = 7 or x - 8 = 7')).toEqual(['6'])
+    // The corrected expansion is arithmetic the tutor is not allowed to do: the engine shows it on request instead.
+    expect(strangeNumbers('Here 3(x - 2) = 3x - 6.', ...BRACKETS)).toEqual(['6'])
+  })
+
+  it('does not mistake line numbers, ordinals or squares for arithmetic', () => {
+    expect(strangeNumbers('Look at line 5 again, the 5th step, and remember (a + b)² has a middle term.', '2(x + 3) = 14', '2x + 3 = 14')).toEqual([])
+    expect(strangeNumbers('Put x = 17/3 into line 1 and you get 15, not 19.', ...BRACKETS)).toEqual([])
+    expect(strangeNumbers('With x = 20/3 the line above gives 40.333, not 32.333.', '5(x + 2) - 3 = 2x + 19', '5x + 2 - 3 = 2x + 19')).toEqual([])
   })
 
   it('catches the finished answer of a simplify problem', () => {

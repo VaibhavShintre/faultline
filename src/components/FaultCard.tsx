@@ -155,6 +155,7 @@ interface Turn {
 const WHY: Record<string, string> = {
   'answer-leak': 'it gave away the answer',
   'false-arithmetic': 'it contained arithmetic that is wrong',
+  'foreign-number': 'it used a number that is not in your working',
 }
 
 function CheckNote({ check, reason }: { check: NonNullable<Turn['check']>; reason: string }) {
@@ -185,12 +186,15 @@ function TutorPanel({ analysis, ai, onEnableAi }: Pick<Props, 'analysis' | 'ai' 
   const [question, setQuestion] = useState('')
   const tutor = useRef<Tutor | null>(null)
 
-  const speak = async (prompt: string) => {
+  const speak = async (prompt: string, question = '') => {
     setBusy(true)
     setTurns((t) => [...t, { who: 'tutor', text: '' }])
     try {
       tutor.current ??= await createTutor()
-      const reply = await guardedSay(tutor.current, prompt, guardContext(analysis), (text) => setTurns((t) => [...t.slice(0, -1), { who: 'tutor', text }]))
+      const ctx = guardContext(analysis)
+      // Numbers the student typed themselves are fair for the tutor to repeat.
+      if (ctx) for (const m of question.matchAll(/\d+(?:\.\d+)?/g)) ctx.numbers.push(Number(m[0]))
+      const reply = await guardedSay(tutor.current, prompt, ctx, (text) => setTurns((t) => [...t.slice(0, -1), { who: 'tutor', text }]))
       const hard = reply.attempts.flatMap((a) => a.flags).find((f) => WHY[f.kind])
       setTurns((t) => [...t.slice(0, -1), { who: 'tutor', text: reply.text, check: reply, reason: hard ? WHY[hard.kind] : '' }])
     } catch {
@@ -223,7 +227,7 @@ function TutorPanel({ analysis, ai, onEnableAi }: Pick<Props, 'analysis' | 'ai' 
     if (!q || busy) return
     setQuestion('')
     setTurns((t) => [...t, { who: 'you', text: q }])
-    void speak(followUpPrompt(analysis.steps, analysis.faultIndex!, q))
+    void speak(followUpPrompt(analysis.steps, analysis.faultIndex!, q), q)
   }
 
   if (ai === 'unavailable' || failed)
@@ -262,6 +266,9 @@ function TutorPanel({ analysis, ai, onEnableAi }: Pick<Props, 'analysis' | 'ai' 
         ))}
         {ai === 'checking' && <p className="muted">Looking for an on-device model…</p>}
       </div>
+      <p className="tutor-caveat">
+        The tutor’s words come from a small language model and can be muddled. The marked lines, the number check and the rule above are exact.
+      </p>
       <form className="ask" onSubmit={ask}>
         <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask why, or say what you were thinking" aria-label="Ask the tutor a question" />
         <button className="btn" disabled={busy || !question.trim()}>

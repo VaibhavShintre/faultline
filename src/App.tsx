@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { type AiStatus, aiStatus, createTutor, warmTutor } from './ai'
 import { FaultCard } from './components/FaultCard'
+import { LabView } from './components/Lab'
 import { Crack, StepEditor } from './components/StepEditor'
 import { Tex } from './components/Tex'
 import { type Analysis, analyze } from './engine/analyze'
@@ -8,23 +9,14 @@ import { type Mastery, level, loadMastery, observe, saveMastery } from './engine
 import { CATALOG, FAMILIES } from './engine/catalog'
 import { lineToTex, parseLine } from './engine/line'
 import type { MisconceptionId } from './engine/malrules'
+import { EXAMPLES } from './examples'
 import { type Problem, hasTargetedPractice, isFinished, makeProblem } from './engine/practice'
 
-type Tab = 'check' | 'practice' | 'map'
+type Tab = 'check' | 'practice' | 'map' | 'lab'
 
-const EXAMPLES: { title: string; lines: string[] }[] = [
-  { title: 'Brackets', lines: ['3(x - 2) + 4 = 19', '3x - 2 + 4 = 19', '3x + 2 = 19', '3x = 17', 'x = 17/3'] },
-  { title: 'Minus a bracket', lines: ['12 - (x - 4) = 9', '12 - x - 4 = 9', '8 - x = 9', 'x = -1'] },
-  { title: 'Squaring', lines: ['(x + 5)^2 - x^2', 'x^2 + 25 - x^2', '25'] },
-  { title: 'Quadratic', lines: ['x^2 - 9 = 40', 'x^2 = 49', 'x = 7'] },
-  { title: 'Fractions', lines: ['x/3 + 2 = 6', 'x + 2 = 18', 'x = 16'] },
-  { title: 'Factoring', lines: ['x^2 - 5x + 6 = 0', '(x - 2)(x - 3) = 0', 'x = -2 or x = -3'] },
-  { title: 'Two mistakes', lines: ['5(x + 2) - 3 = 2x + 19', '5x + 2 - 3 = 2x + 19', '5x - 1 = 2x + 19', '7x - 1 = 19', '7x = 20', 'x = 20/7'] },
-  { title: 'All correct', lines: ['2(x + 5) = 3x - 4', '2x + 10 = 3x - 4', '10 = x - 4', 'x = 14'] },
-]
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>('check')
+  const [tab, setTab] = useState<Tab>(() => (location.hash === '#lab' ? 'lab' : 'check'))
   const [ai, setAi] = useState<AiStatus>('checking')
   const [mastery, setMastery] = useState<Mastery>(loadMastery)
   const [practiceSkill, setPracticeSkill] = useState<MisconceptionId>('distribute-partial')
@@ -90,11 +82,21 @@ export default function App() {
       {tab === 'check' && <CheckView ai={ai} onEnableAi={enableAi} onFault={(id) => record(id, false)} onPractice={practise} />}
       {tab === 'practice' && <PracticeView key={practiceSkill} skill={practiceSkill} setSkill={setPracticeSkill} mastery={mastery} record={record} ai={ai} onEnableAi={enableAi} />}
       {tab === 'map' && <MapView mastery={mastery} onPractice={practise} onReset={() => setMastery({})} />}
+      {tab === 'lab' && <LabView ai={ai} />}
 
       <footer className="foot">
         <p>
           Marking is done by exact symbolic arithmetic, so a correct line is never marked wrong. The language model only words the explanation, and it runs on
-          your device.
+          your device.{' '}
+          <button
+            className="link"
+            onClick={() => {
+              setTab('lab')
+              window.scrollTo({ top: 0 })
+            }}
+          >
+            See how the model is checked
+          </button>
         </p>
       </footer>
     </div>

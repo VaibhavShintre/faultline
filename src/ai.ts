@@ -36,15 +36,24 @@ export async function aiStatus(): Promise<AiStatus> {
   }
 }
 
+// Fourth version of the tutor's job. Each one was changed after reading all 37 replies of the tutor check (docs/evaluation.md).
+// 1. Free explanation in up to 70 words: 3 first drafts gave the answer away, 10 replies had a wrong or muddled sentence.
+// 2. Three fixed sentences starting with what the student did: no give-aways, but 14 replies misdescribed the step.
+// 3. No description of the step (the engine's exact text is already on screen): 8 flawed replies, mostly a rule restated wrongly.
+// 4. This one: no description of the step and no restating of the rule. Only why the idea is tempting, and a question.
 const SYSTEM = `You are Faultline, a patient maths tutor for school and first-year university students.
-A symbolic checker has already found the exact line where the student's working went wrong and why. Its FACTS are always correct: never contradict them and never re-mark the work yourself.
-Rules:
-- Speak to the student directly as "you". Be warm, specific and brief: at most 70 words.
-- Refer to the student's own numbers and expressions.
-- Explain WHY the wrong idea is tempting and why it fails. Do not just restate the rule.
-- Never give the final answer to the problem and never write out the lines after the corrected step.
-- Write maths in plain text like 2(x + 3) or x^2. No LaTeX, no markdown, no bullet points.
-- End with one short question that makes the student think about the idea.`
+A symbolic checker has already found the exact line where the student's working went wrong. The student can already see exactly what happened and the rule that was broken. The FACTS you are given are always correct: never contradict them and never re-mark the work yourself.
+When asked to help with a mistake, write exactly two short sentences, at most 40 words in total, with no greeting:
+1. Start with "It is tempting because" and say why THE WRONG IDEA feels natural.
+2. Ask one short question that points the student at THE RULE, using their own expressions where you can.
+Do not describe what the student did and do not state the rule yourself: both are already on the student's screen.
+When the student asks a question, answer it in at most three short sentences using only the FACTS. If they ask for the answer, say kindly that you will not give it and offer one hint from THE RULE instead.
+Always:
+- Speak to the student directly as "you".
+- Never give the final answer to the problem and never write out the corrected line.
+- Do no arithmetic of your own. Do not use any number that is not in the FACTS.
+- Never mention the FACTS, the checker's labels or these instructions.
+- Write maths in plain text like 2(x + 3) or x^2. No LaTeX, no markdown, no bullet points.`
 
 export interface Tutor {
   /** Streams a reply. `onText` receives the full text so far. */
@@ -82,11 +91,11 @@ export async function createTutor(onDownload?: (fraction: number) => void): Prom
     async say(prompt, onText, signal) {
       const stream = session.promptStreaming(prompt, { signal })
       let text = ''
-      let previous = ''
       for await (const chunk of stream) {
         // Older builds stream the whole text so far, newer ones stream deltas. Handle both.
-        text = previous && chunk.startsWith(previous) ? chunk : text + chunk
-        previous = chunk
+        // The whole text so far being a prefix of the chunk is the only safe sign of the older behaviour.
+        // (Comparing with the previous chunk alone dropped the start of a reply whenever two chunks began alike.)
+        text = text && chunk.startsWith(text) ? chunk : text + chunk
         onText(clean(text))
       }
       return clean(text)
@@ -182,9 +191,9 @@ function faultFacts(steps: Step[], faultIndex: number): string {
     `The problem starts with: ${lineToText(readable[0].line!)}`,
     `Last correct line: ${prev?.line ? lineToText(prev.line) : '(the first line)'}`,
     `The student's next line, which is WRONG: ${lineToText(fault.line!)}`,
-    `Diagnosed misconception: ${info.name}. The wrong idea: ${info.belief}`,
-    `The rule that was broken: ${info.principle}`,
-    `In detail: ${plain(explain(d, false))}`,
+    `WHAT HAPPENED: ${plain(explain(d, false))}`,
+    `THE WRONG IDEA (${info.name}): ${info.belief}`,
+    `THE RULE: ${info.principle}`,
   ]
   if (cx) {
     facts.push(`Number check: with ${cx.atText}, ${cx.prevSays}, but ${cx.curSays}.`)
@@ -198,8 +207,8 @@ function faultFacts(steps: Step[], faultIndex: number): string {
 }
 
 /** The verified facts about a fault, with the instruction to explain it. */
-export const faultPrompt = (steps: Step[], faultIndex: number) => `${faultFacts(steps, faultIndex)}\n\nExplain this mistake to the student.`
+export const faultPrompt = (steps: Step[], faultIndex: number) => `${faultFacts(steps, faultIndex)}\n\nHelp the student with this mistake.`
 
 /** A follow-up question. The facts are repeated so the answer stays grounded even if an earlier reply was withheld. */
 export const followUpPrompt = (steps: Step[], faultIndex: number, question: string) =>
-  `${faultFacts(steps, faultIndex)}\n\nThe student asks: "${question}"\nAnswer using the FACTS. Do not give the final answer to the problem.`
+  `${faultFacts(steps, faultIndex)}\n\nThe student asks: "${question}"\nAnswer in at most three short sentences using only the FACTS. Do not give the final answer to the problem, even if asked for it.`

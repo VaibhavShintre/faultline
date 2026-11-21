@@ -9,11 +9,15 @@
  *                        answer) that the student has not written and the app has not shown
  *   false-arithmetic     the reply states a numeric equality that is false, or says two
  *                        equal things differ
+ *   foreign-number       the reply uses a number that appears nowhere in the student's working
+ *                        or in the number check, so the model did arithmetic of its own
  *   unverified-equation  the reply contains an equation that is neither a true identity,
  *                        nor equivalent to one of the student's lines, nor a quote of a step
  *
- * The first two are hard failures: the reply is retried and, if it fails again, withheld.
- * The third is reported but allowed, because prose can quote a wrong idea legitimately.
+ * The first three are hard failures: the reply is retried and, if it fails again, withheld.
+ * The last is reported but allowed, because prose can quote a wrong idea legitimately.
+ *
+ * What this cannot see: a wrong statement made in words, with no maths in it.
  */
 import type { Analysis } from './engine/analyze'
 import { type Node, ParseError, add, children, normalizeInput, parseExpr, variables } from './engine/ast'
@@ -21,7 +25,7 @@ import { type Line, exprLine, lineVariables, nice, sameExpression, sameLine, sol
 import { evaluate } from './engine/poly'
 import { isFinished } from './engine/practice'
 
-export type FlagKind = 'answer-leak' | 'false-arithmetic' | 'unverified-equation'
+export type FlagKind = 'answer-leak' | 'false-arithmetic' | 'foreign-number' | 'unverified-equation'
 
 export interface Flag {
   kind: FlagKind
@@ -45,6 +49,8 @@ export interface GuardContext {
   checkNumbers: number[]
   /** Sub-expressions of the student's lines, so that a quoted step is recognised. */
   fragments: Node[]
+  /** Every number the tutor may mention: those in the working and in the number check, plus 0, 1 and 2. */
+  numbers: number[]
 }
 
 const near = (a: number, b: number) => Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(a), Math.abs(b))
@@ -95,7 +101,12 @@ export function guardContext(analysis: Analysis): GuardContext | null {
     for (const m of `${cx.prevSays} ${cx.curSays}`.matchAll(/-?\d+(?:\.\d+)?/g)) checkNumbers.push(Number(m[0]))
   }
 
-  return { problem, lines, variables: vars, roots, shown, checkNumbers, fragments: lines.flatMap(sidesOf).flatMap((n) => fragmentsOf(n)) }
+  const fragments = lines.flatMap(sidesOf).flatMap((n) => fragmentsOf(n))
+  const numbers = [0, 1, 2, ...shown, ...checkNumbers]
+  // The check value is printed as a fraction ("x = 20/3"), so its parts are known numbers too.
+  for (const st of analysis.steps) for (const m of (st.counterexample?.atText ?? '').matchAll(/\d+(?:\.\d+)?/g)) numbers.push(Number(m[0]))
+  for (const f of fragments) if (f.t === 'num') numbers.push(Math.abs(evaluate(f, {})))
+  return { problem, lines, variables: vars, roots, shown, checkNumbers, fragments, numbers }
 }
 
 /* ------------------------------ Reading the reply ----------------------------- */
@@ -113,7 +124,8 @@ export function mathRuns(text: string, vars: Set<string>): string[] {
   const s = normalizeInput(text).replace(/sqrt/g, '√')
   const mathy = (i: number): boolean => {
     const c = s[i]
-    if (/[0-9+\-*/^().\s=≠√]/.test(c)) return true
+    if (c === '.') return /[0-9]/.test(s[i + 1] ?? '') // a decimal point, not the end of a sentence
+    if (/[0-9+\-*/^()\s=≠√]/.test(c)) return true
     // A lone letter counts only when it is one of the problem's variables: "x", "3x", "x^2", but not "a" in "a bracket".
     return isLetter(c) && vars.has(c) && !isLetter(s[i - 1]) && !isLetter(s[i + 1])
   }
@@ -281,13 +293,31 @@ export function inspectReply(text: string, ctx: GuardContext): Inspection {
     }
   })
 
+  // Numbers the model brought in from nowhere. "Line 3" and "3rd" are not maths.
+  for (const m of normal.matchAll(/(?<![\w.])\d+(?:\.\d+)?(?![\w.]*\d)/g)) {
+    const before = normal.slice(Math.max(0, m.index - 6), m.index).toLowerCase()
+    const after = normal.slice(m.index + m[0].length, m.index + m[0].length + 2).toLowerCase()
+    if (/(line|step|lines|steps)\s$/.test(before) || /^(st|nd|rd|th)/.test(after)) continue
+    const v = Number(m[0])
+    // The number check prints values to three places, so compare loosely.
+    if (!ctx.numbers.some((n) => Math.abs(Math.abs(n) - v) < 0.0006)) flag('foreign-number', m[0], `It uses the number ${m[0]}, which is nowhere in the working.`)
+  }
+
   return { flags, checked }
 }
 
-export const isHard = (f: Flag) => f.kind === 'answer-leak' || f.kind === 'false-arithmetic'
+export const isHard = (f: Flag) => f.kind !== 'unverified-equation'
 
 /** What to add to the prompt when a reply has to be written again. */
 export function retryNote(flags: Flag[]): string {
-  const reasons = flags.filter(isHard).map((f) => (f.kind === 'answer-leak' ? `it gave away the answer ("${f.quote}")` : `it contained a false statement ("${f.quote}")`))
+  const reasons = flags
+    .filter(isHard)
+    .map((f) =>
+      f.kind === 'answer-leak'
+        ? `it gave away the answer ("${f.quote}")`
+        : f.kind === 'foreign-number'
+          ? `it used the number ${f.quote}, which is not in the FACTS`
+          : `it contained a false statement ("${f.quote}")`,
+    )
   return `IMPORTANT: an earlier attempt could not be shown to the student because ${reasons.join(' and ')}. This time do not state any solution of the problem and do not do any arithmetic of your own. Use only the FACTS.`
 }
