@@ -6,6 +6,8 @@ Faultline is a maths tutor that reads a student's working line by line, finds th
 
 **Live demo:** https://vaibhavshintre.github.io/faultline/
 
+**Demo video (2 min):** https://youtu.be/IyGiH8KBOoE
+
 ![Faultline diagnosing a distribution mistake](docs/screenshot-fault.jpg)
 
 | The on-device tutor | The misconception map |
