@@ -6,13 +6,13 @@ Faultline is a maths tutor that reads a student's working line by line, finds th
 
 **Live demo:** https://vaibhavshintre.github.io/faultline/
 
-**Demo video (2 min):** https://youtu.be/IyGiH8KBOoE
+**Demo video (3 min):** https://youtu.be/wyc7cWXW9ps
 
-![Faultline diagnosing a distribution mistake](docs/screenshot-fault.jpg)
+![Faultline finding the fault line and marking the lines after it](docs/shot-fault.jpg)
 
-| The on-device tutor | The misconception map |
+| A second, separate mistake | How the on-device model was checked |
 |---|---|
-| ![Tutor explaining the mistake](docs/screenshot-tutor.jpg) | ![Misconception map](docs/screenshot-map.jpg) |
+| ![A second mistake diagnosed against the line above it](docs/shot-second.jpg) | ![Engine 24 of 24, model alone 12 of 24](docs/shot-lab.jpg) |
 
 ## The problem
 
